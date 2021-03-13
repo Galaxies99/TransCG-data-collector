@@ -1,5 +1,13 @@
+# User-defined Files
+models/
+object_file_name_list.txt
+object_id_list.txt
+.DS_Store
+*/.DS_Store
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
+camera/__pycache__/
 *.py[cod]
 *$py.class
 
