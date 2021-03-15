@@ -4,6 +4,8 @@ object_file_name_list.txt
 object_id_list.txt
 .DS_Store
 */.DS_Store
+results/
+preprocessing/rawdata/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

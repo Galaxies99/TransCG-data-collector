@@ -114,6 +114,14 @@ def on_press(key):
 def on_release(key):
 	pass
 
+
+def img_from_cam():
+	image, image_depth = camera.get_rgbd()
+	image = (image * 255).astype(np.uint8)
+	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+	return image, image_depth
+
+
 def main():
 	global runningflag, x, y, z, alpha, beta, gamma
 	global moving_speed
@@ -168,26 +176,23 @@ def main():
 		for objectid in objectidlist:
 			existed_object_file_name_list.append(objectfilenamelist[objectid])
 
-		print('log:read image from camera')
-		image, image_depth = camera.get_rgbd()
-		image = (image * 255).astype(np.uint8)
-		image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-		print('log:image loaded')
+		image, image_depth = img_from_cam()
 
 		textimage = copy.deepcopy(image)
 		textimage = cv2.putText(textimage, 'Input an intager to select ply file, 0 for exiting', (10, 30), font, font_size, font_color, font_thickness)
 		textimage = cv2.putText(textimage, '0: exit',(10, 55), font, font_size, font_color, font_thickness)
-		textimage = cv2.putText(textimage, '1: recapture image', (10, 80), font, font_size, font_color, font_thickness)
 		for i in range(len(existed_object_file_name_list)):
-			if i < 8:
-				textimage = cv2.putText(textimage, str(i+2)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 2)),font, font_size, font_color, font_thickness)
+			if i < 9:
+				textimage = cv2.putText(textimage, str(i+1)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 1)),font, font_size, font_color, font_thickness)
 			else:
-				textimage = cv2.putText(textimage, chr(ord('a') + i - 8)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 2)),font, font_size, font_color, font_thickness)
+				textimage = cv2.putText(textimage, chr(ord('a') + i - 9)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 1)),font, font_size, font_color, font_thickness)
 		cv2.imshow('Annotater',textimage)
-
-		getkey = cv2.waitKey(0)
-		while getkey < ord('0') or getkey > ord('z') or (getkey < ord('a') and getkey > ord('9')):
-			getkey = cv2.waitKey(0)
+		getkey = cv2.waitKey(1)
+		no_key_flag = False
+		if getkey < ord('0') or getkey > ord('z') or (getkey < ord('a') and getkey > ord('9')):
+			no_key_flag = True
+		if no_key_flag:
+			continue
 		if getkey - ord('0') <= 9:
 			plyfilenumber = getkey - ord('0')
 		else:
@@ -195,11 +200,8 @@ def main():
 	
 		if plyfilenumber == 0:
 			break
-		elif plyfilenumber == 1:
-			print('log:recapture')
-			continue
 		else:
-			plyfilenumber -= 2
+			plyfilenumber -= 1
 		# the plyfilenumber is out of range
 		if plyfilenumber >= len(existed_object_file_name_list):
 			continue
@@ -227,6 +229,7 @@ def main():
 		listener.start()
 		
 		while runningflag:
+			image, image_depth = img_from_cam()
 			pose = get_mat(x,y,z, alpha, beta, gamma)
 			rendered_image=draw_model(image, pose, cam, models[plyfilenumber])
 			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d' % (x,y,z,alpha,beta,gamma,moving_speed),\
