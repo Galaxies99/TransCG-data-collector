@@ -61,6 +61,11 @@ class xmlWriter():
             ori_in_world = SubElement(obj_entry, 'ori_in_world')
             ori_in_world.text = '{:.4f} {:.4f} {:.4f} {:.4f}'.format(
                 quat[0], quat[1], quat[2], quat[3])
+            
+            transformation_matrix = SubElement(obj_entry, 'transformation_matrix')
+            transformation_matrix.text = '[{:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}, {:.15f}]'.format(
+                pose[0, 0], pose[0, 1], pose[0, 2], pose[0, 3], pose[1, 0], pose[1, 1], pose[1, 2], pose[1, 3], pose[2, 0], pose[2, 1], pose[2, 2], pose[2, 3], pose[3, 0], pose[3, 1], pose[3, 2], pose[3, 3]
+            )
         xmlstr = xml.dom.minidom.parseString(
             tostring(self.top)).toprettyxml(indent='    ')
         # remove blank line
