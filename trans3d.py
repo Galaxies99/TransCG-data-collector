@@ -25,14 +25,13 @@ def get_mat(x,y,z, alpha, beta, gamma):
 
 def pos_quat_to_pose_4x4(pos, quat):
     """
-    Convert pose, 4x4 format into pos and quat
-    
-    Args:
-        pose: numpy array, 4x4
-    Returns:
-    	pos: length-3 position
-        quat: length-4 quaternion
+    Convert pos and quat into pose, 4x4 format
 
+    Args:
+        pos: length-3 position
+        quat: length-4 quaternion
+    Returns:
+        pose: numpy array, 4x4
     """
     pose = np.zeros([4, 4])
     mat = quat2mat(quat)
@@ -43,15 +42,14 @@ def pos_quat_to_pose_4x4(pos, quat):
 
 
 def pose_4x4_to_pos_quat(pose):
-	"""pose = pos_quat_to_pose_4x4(pos, quat)
-    Convert pos and quat into pose, 4x4 format
-
+	"""
+    Convert pose, 4x4 format, into pos and quat
+    
     Args:
-        pos: length-3 position
-        quat: length-4 quaternion
-
-    Returns:
         pose: numpy array, 4x4
+    Returns:
+    	pos: length-3 position
+        quat: length-4 quaternion
     """
 	mat = pose[:3, :3]
 	quat = mat2quat(mat)
@@ -60,3 +58,27 @@ def pose_4x4_to_pos_quat(pose):
 	pos[1] = pose[1, 3]
 	pos[2] = pose[2, 3]
 	return pos, quat
+
+
+def pose_4x4_rotation(pose, angle, axis):
+	"""
+	Rotate pose, 4x4 format, along X/Y/Z-axis
+
+	Args:
+		pose: numpy array, 4x4
+		angle: the rotate angle represented in degree
+		axis: ['X', 'Y', 'Z'], the rotate axis.
+	Returns:
+		pose: numpy array, 4x4
+	"""
+	angle = angle / 180.0 * np.pi
+	if axis == 'X':
+		trans_matrix = np.array([[1, 0, 0, 0], [0, np.cos(angle), np.sin(angle), 0], [0, -np.sin(angle), np.cos(angle), 0], [0, 0, 0, 1]])
+	elif axis == 'Y':
+		trans_matrix = np.array([[np.cos(angle), 0, np.sin(angle), 0], [0, 1, 0, 0], [-np.sin(angle), 0, np.cos(angle), 0], [0, 0, 0, 1]])
+	elif axis == 'Z':
+		trans_matrix = np.array([[np.cos(angle), np.sin(angle), 0, 0], [-np.sin(angle), np.cos(angle), 0, 0], [0, 0, 1, 0], [0, 0, 0, 1]])
+	else:
+		raise AttributeError('Axis should be \'X\', \'Y\' or \'Z\'.')
+	pose = pose.dot(trans_matrix)
+	return pose

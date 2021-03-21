@@ -6,6 +6,7 @@ object_id_list.txt
 */.DS_Store
 results/
 preprocessing/rawdata/
+preprocessing/use_t2v_list.txt
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

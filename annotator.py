@@ -9,11 +9,11 @@ from pynput import keyboard
 from renderer import Renderer,draw_model
 from camera.camera import RealSenseCamera
 from frame_transform import frameTransformer
-from model import Model3D,loadmodel,cachemodel
-from trans3d import get_mat,pos_quat_to_pose_4x4
+from model import Model3D, loadmodel, cachemodel
 from transforms3d.euler import quat2euler, euler2quat
 from transforms3d.quaternions import mat2quat, quat2mat
 from xmlhandler import xmlWriter,xmlReader,getposevectorlist
+from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose, pose_4x4_rotation
 
 
 parser = argparse.ArgumentParser()
@@ -23,8 +23,8 @@ parser.add_argument('--xml_dir',default='results',help='output xml file director
 parser.add_argument('--camera',default='realsense',help='realsense or kinect')
 parser.add_argument('--resume',default='True',help='xml file path to resume annotation')
 parser.add_argument('--id', default=0, help='The experiment ID')
-parser.add_argument('--object_id_list',default='object_id_list.txt',help='ascii text file name that specifies the ids of objects that appear in the scene')
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
+parser.add_argument('--time',default=0,help='time')
 FLAGS = parser.parse_args()
 
 if FLAGS.save_xml == 'True':
@@ -51,8 +51,8 @@ else:
 
 
 MODEL_DIR=FLAGS.model_dir
+TIME = FLAGS.time
 
-OBJECT_ID_LIST_FILE_NAME=FLAGS.object_id_list
 OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
 EXPER_ID = FLAGS.id
 
@@ -85,17 +85,24 @@ def on_press(key):
 			elif key.char == 'c':
 				z -= 0.001 * moving_speed
 			elif key.char == 'j':
-				alpha += 1.0 * moving_speed
+				angle = 1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='X'))
 			elif key.char == 'l':
-				alpha -= 1.0 * moving_speed
+				angle = -1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='X'))
+				print(x, y, z, alpha, beta, gamma)
 			elif key.char == 'i':
-				beta += 1.0 * moving_speed
+				angle = 1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='Y'))
 			elif key.char == 'k':
-				beta -= 1.0 * moving_speed
+				angle = -1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='Y'))
 			elif key.char == 'u':
-				gamma += 1.0 * moving_speed
+				angle = 1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='Z'))
 			elif key.char == 'm':
-				gamma -= 1.0 * moving_speed
+				angle = -1.0 * moving_speed
+				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='Z'))
 			elif key.char == ']':
 				moving_speed *= 5
 			elif key.char == '[':
@@ -140,12 +147,7 @@ def main():
 	print('log:loaded object file name list:',end='')
 	print(objectfilenamelist)
 	
-	object_id_list_file = open(OBJECT_ID_LIST_FILE_NAME,'r')
-	lines = object_id_list_file.readlines()
-	objectidlist=[]
-	for line in lines:
-		if not (line == '\n'):
-			objectidlist.append(int(line))
+	objectidlist=[EXPER_ID]
 	print('log:loaded object id list:',end='')
 	print(objectidlist)
     
@@ -250,7 +252,7 @@ def main():
 				os.mkdir(XML_DIR)
 			mainxmlWriter = xmlWriter()
 			mainxmlWriter.objectlistfromposevectorlist(posevectorlist=posevectorlist, objdir=MODEL_DIR, objnamelist=objectfilenamelist, objidlist=objectidlist)
-			mainxmlWriter.writexml(xmlfilename=os.path.join(XML_DIR, f'{EXPER_ID}.xml'))
+			mainxmlWriter.writexml(xmlfilename=os.path.join(XML_DIR, f'{EXPER_ID}-{TIME}.xml'))
 
 if __name__ == '__main__':
 	main()

@@ -1,0 +1,28 @@
+<!DOCTYPE FilterScript>
+<FilterScript>
+ <filter name="Transform: Translate, Center, set Origin">
+  <Param tooltip="[XYZ translation] adds X,Y and Z offset to Layer transformation, [Center on BBox] moves Layer Origin to the Bounding Box center, [Set new Origin] moves Layer Origin to a specific point" value="1" enum_val2="Center on Layer BBox" description="Transformation:" enum_val3="Set new Origin" enum_cardinality="4" isxmlparam="0" enum_val1="Center on Scene BBox" name="traslMethod" type="RichEnum" enum_val0="XYZ translation"/>
+  <Param tooltip="when using [XYZ translation], amount of translation along the X axis (in model units)" value="0" description="X Axis" max="1272.97" isxmlparam="0" min="-1272.97" name="axisX" type="RichDynamicFloat"/>
+  <Param tooltip="when using [XYZ translation], amount of translation along the Y axis (in model units)" value="0" description="Y Axis" max="1272.97" isxmlparam="0" min="-1272.97" name="axisY" type="RichDynamicFloat"/>
+  <Param tooltip="when using [XYZ translation], amount of translation along the Z axis (in model units)" value="0" description="Z Axis" max="1272.97" isxmlparam="0" min="-1272.97" name="axisZ" type="RichDynamicFloat"/>
+  <Param tooltip="when using [Set new Origin], this is the location of the new Origin." y="0" description="New Origin:" isxmlparam="0" name="newOrigin" type="RichPoint3f" x="0" z="0"/>
+  <Param tooltip="The transformation is explicitly applied, and the vertex coordinates are actually changed" value="true" description="Freeze Matrix" isxmlparam="0" name="Freeze" type="RichBool"/>
+  <Param tooltip="If selected the filter will be applied to all visible mesh layers" value="false" description="Apply to all visible Layers" isxmlparam="0" name="allLayers" type="RichBool"/>
+ </filter>
+ <filter name="Transform: Align to Principal Axis">
+  <Param tooltip="If selected, only the vertices of the mesh are used to compute the Principal Axis. Mandatory for point clouds or for non water tight meshes" value="true" description="Use vertex" isxmlparam="0" name="pointsFlag" type="RichBool"/>
+  <Param tooltip="The transformation is explicitly applied, and the vertex coordinates are actually changed" value="true" description="Freeze Matrix" isxmlparam="0" name="Freeze" type="RichBool"/>
+  <Param tooltip="If selected the filter will be applied to all visible mesh layers" value="false" description="Apply to all visible Layers" isxmlparam="0" name="allLayers" type="RichBool"/>
+ </filter>
+ <filter name="Transform: Scale, Normalize">
+  <Param tooltip="Scaling" value="0.001" description="X Axis" isxmlparam="0" name="axisX" type="RichFloat"/>
+  <Param tooltip="Scaling" value="0.001" description="Y Axis" isxmlparam="0" name="axisY" type="RichFloat"/>
+  <Param tooltip="Scaling" value="0.001" description="Z Axis" isxmlparam="0" name="axisZ" type="RichFloat"/>
+  <Param tooltip="If selected an uniform scaling (the same for all the three axis) is applied (the X axis value is used)" value="true" description="Uniform Scaling" isxmlparam="0" name="uniformFlag" type="RichBool"/>
+  <Param tooltip="Choose a method" value="0" enum_val2="custom point" description="Center of scaling:" enum_cardinality="3" isxmlparam="0" enum_val1="barycenter" name="scaleCenter" type="RichEnum" enum_val0="origin"/>
+  <Param tooltip="This scaling center is used only if the 'custom point' option is chosen." y="0" description="Custom center" isxmlparam="0" name="customCenter" type="RichPoint3f" x="0" z="0"/>
+  <Param tooltip="If selected, the object is scaled to a box whose sides are at most 1 unit length" value="false" description="Scale to Unit bbox" isxmlparam="0" name="unitFlag" type="RichBool"/>
+  <Param tooltip="The transformation is explicitly applied, and the vertex coordinates are actually changed" value="true" description="Freeze Matrix" isxmlparam="0" name="Freeze" type="RichBool"/>
+  <Param tooltip="If selected the filter will be applied to all visible mesh layers" value="false" description="Apply to all visible Layers" isxmlparam="0" name="allLayers" type="RichBool"/>
+ </filter>
+</FilterScript>
