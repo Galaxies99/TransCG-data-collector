@@ -5,7 +5,7 @@ import cv2
 
 DEBUG = True
 
-camera = RealSense(frame_rate = 30, resolution=(1024, 768))
+camera = RealSense(frame_rate = 30, resolution=(1280, 720), resolution_depth=(1024, 768))
 if DEBUG:
     for i in range(10):
         colors, depths = camera.get_rgbd_image()

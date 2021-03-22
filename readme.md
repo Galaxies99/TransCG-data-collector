@@ -27,12 +27,14 @@ Here, replace `[Your MeshLab Server Path]` with your own MeshLab Server path, us
 Run the following commands <u>in parallel</u>.
 
 ```bash
-python camera/realsense.py
+python camera/[Camera Version].py
 ```
 
 ```
 python annotator.py
 ```
+
+Here, replace `[Camera Version]` with your RGB-D camera version. Currently, `realsense_D435` and `realsense_L515` are supported.
 
 Then, you can annotate the data according to the guide in GUI window.
 
