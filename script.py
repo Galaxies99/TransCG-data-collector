@@ -16,14 +16,17 @@ PORT = FLAGS.port
 filename = '{}-{}'.format(ID, TIME)
 
 s, id = client.start((IP, PORT))
-cmd = 'curl -X GET http://localhost:7278/PSTapi/StartTrackerDataStream'
+cmd_open = 'curl -X GET http://localhost:7278/PSTapi/StartTrackerDataStream'
+cmd_close = 'curl --request POST --data \'\' http://localhost:7278/PSTapi/CloseDataStream'
 
 while True:
-    client.exec_cmd_and_save(s, cmd, 'results/{}.json'.format(filename), display=True)
+    client.exec_cmd_and_save(s, cmd_open, 'results/{}.json'.format(filename), display=True)
     str = input('Finish getting tracker data? (y/n): ')
     if str == 'y':
         break
 
+res, err = client.exec_cmd(s, cmd_close)
+print(res)
 client.close(s)
 
 os.system('python annotator.py --id {} --time {}'.format(ID, TIME))
