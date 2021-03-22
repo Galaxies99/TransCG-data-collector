@@ -22,9 +22,9 @@ parser.add_argument('--save_xml',default='True',help='True for saving xml, False
 parser.add_argument('--xml_dir',default='results',help='output xml file directory')
 parser.add_argument('--camera',default='realsense',help='realsense or kinect')
 parser.add_argument('--resume',default='True',help='xml file path to resume annotation')
-parser.add_argument('--id', default=0, help='The experiment ID')
+parser.add_argument('--id', default=0, help='The experiment ID', type=int)
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--time',default=0,help='time')
+parser.add_argument('--time',default=0,help='time', type=int)
 FLAGS = parser.parse_args()
 
 if FLAGS.save_xml == 'True':
@@ -90,7 +90,6 @@ def on_press(key):
 			elif key.char == 'l':
 				angle = -1.0 * moving_speed
 				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='X'))
-				print(x, y, z, alpha, beta, gamma)
 			elif key.char == 'i':
 				angle = 1.0 * moving_speed
 				x, y, z, alpha, beta, gamma = get_pose(pose_4x4_rotation(get_mat(x, y, z, alpha, beta, gamma), angle, axis='Y'))
@@ -165,7 +164,7 @@ def main():
 	# object pose vector format
 	# [id,x,y,z,alpha,beta,gamma] angle in unit of degree
 	# posevectorlist[objectid] = [id,x,y,z,alpha,beta,gamma]
-	posevectorlist = getposevectorlist(objectidlist, IS_RESUME, EXPER_ID, XML_DIR)
+	posevectorlist = getposevectorlist(objectidlist, IS_RESUME, EXPER_ID, TIME, XML_DIR)
 	models = []
 	models_ply = []
 	for i in range(len(objectidlist)):

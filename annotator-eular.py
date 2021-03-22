@@ -158,7 +158,7 @@ def main():
 	# object pose vector format
 	# [id,x,y,z,alpha,beta,gamma] angle in unit of degree
 	# posevectorlist[objectid] = [id,x,y,z,alpha,beta,gamma]
-	posevectorlist = getposevectorlist(objectidlist, IS_RESUME, EXPER_ID, XML_DIR)
+	posevectorlist = getposevectorlist(objectidlist, IS_RESUME, EXPER_ID, TIME, XML_DIR)
 	models = []
 	models_ply = []
 	for i in range(len(objectidlist)):

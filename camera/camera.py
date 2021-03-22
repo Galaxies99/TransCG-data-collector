@@ -6,7 +6,8 @@ import numpy as np
 import cv2
 
 class RealSenseCamera(object):
-    def __init__(self):
+    def __init__(self, resolution=(1280, 720)):
+        self.resolution = resolution
         self.existing_shm_color = shared_memory.SharedMemory(name='realsense_color')
         self.existing_shm_depth = shared_memory.SharedMemory(name='realsense_depth')
     
@@ -16,8 +17,8 @@ class RealSenseCamera(object):
             Get the 720x1280x3 RGB image together with a 720x1280 depth image from the realsense camera. Need to execute "realsense.py" first.
         '''
         time.sleep(0.1)
-        colors = np.copy(np.ndarray((720, 1280, 3), dtype=np.float32, buffer=self.existing_shm_color.buf))
-        depths = np.copy(np.ndarray((720, 1280), dtype=np.uint16, buffer=self.existing_shm_depth.buf))
+        colors = np.copy(np.ndarray((self.resolution[1], self.resolution[0], 3), dtype=np.float32, buffer=self.existing_shm_color.buf))
+        depths = np.copy(np.ndarray((self.resolution[1], self.resolution[0]), dtype=np.uint16, buffer=self.existing_shm_depth.buf))
         return colors, depths
 
 

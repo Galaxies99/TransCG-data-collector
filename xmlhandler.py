@@ -151,14 +151,23 @@ def getframeposevectorlist(objectidlist, is_resume, frame_number, xml_dir):
     return frameposevectorlist
 '''
 
-def getposevectorlist(objectidlist, is_resume, id, xml_dir):
-    if not is_resume or (not os.path.exists(os.path.join(xml_dir, '%04d.xml' % id))):
+def getposevectorlist(objectidlist, is_resume, id, times, xml_dir):
+    exist_last = False
+    filename = '{}-{}.xml'.format(id, times)
+    if not os.path.exists(os.path.join(xml_dir, filename)):
+        if times != 0:
+            filename = '{}-{}.xml'.format(id, times - 1)
+            if os.path.exists(os.path.join(xml_dir, filename)):
+                exist_last = True
+    else:
+        exist_last = True
+    if not is_resume or (not exist_last):
         print('log:create empty pose vector list')
         return empty_pose_vector_list(objectidlist)
     else:
         print('log:resume pose vector from ' +
-              os.path.join(xml_dir, '%04d.xml' % id))
-        xmlfile = os.path.join(xml_dir, '%04d.xml' % id)
+              os.path.join(xml_dir, filename))
+        xmlfile = os.path.join(xml_dir, filename)
         mainxmlReader = xmlReader(xmlfile)
         xmlposevectorlist = mainxmlReader.getposevectorlist()
         posevectorlist = []
