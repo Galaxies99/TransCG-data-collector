@@ -12,7 +12,7 @@ from frame_transform import frameTransformer
 from model import Model3D, loadmodel, cachemodel
 from transforms3d.euler import quat2euler, euler2quat
 from transforms3d.quaternions import mat2quat, quat2mat
-from xmlhandler import xmlWriter,xmlReader,getposevectorlist
+from xmlhandler import xmlWriter, xmlReader, get_pose_vector
 from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose, pose_4x4_rotation
 
 
@@ -21,8 +21,7 @@ parser.add_argument('--model_dir', default='models', help='ply model files direc
 parser.add_argument('--save_xml',default='True',help='True for saving xml, False for not saving xml, when checking the result, this arg should be set as False')
 parser.add_argument('--xml_dir',default='results',help='output xml file directory')
 parser.add_argument('--camera',default='realsense',help='realsense or kinect')
-parser.add_argument('--resume',default='True',help='xml file path to resume annotation')
-parser.add_argument('--id', default=0, help='The experiment ID', type=int)
+parser.add_argument('--id', default=0, help='The object ID', type=int)
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
 parser.add_argument('--time',default=0,help='time', type=int)
 FLAGS = parser.parse_args()
@@ -34,13 +33,6 @@ elif FLAGS.save_xml == 'False':
 	IS_SAVE_XML = False
 else:
 	raise ValueError('Invalid input for argument "save_xml"\n"save_xml" should be True or False')
-
-if FLAGS.resume == 'True':
-	IS_RESUME = True
-elif FLAGS.resume == 'False':
-	IS_RESUME = False
-else:
-	raise ValueError('Invalid input for argument "resume"\n"resume" should be True or False')
 
 if FLAGS.camera == 'realsense':
 	camera = RealSenseCamera()
@@ -54,7 +46,7 @@ MODEL_DIR=FLAGS.model_dir
 TIME = FLAGS.time
 
 OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
-EXPER_ID = FLAGS.id
+OBJ_ID = FLAGS.id
 
 # global variables
 moving_speed = 5
@@ -146,9 +138,7 @@ def main():
 	print('log:loaded object file name list:',end='')
 	print(objectfilenamelist)
 	
-	objectidlist=[EXPER_ID]
-	print('log:loaded object id list:',end='')
-	print(objectidlist)
+	objectidlist=[OBJ_ID]
     
 	print('log:loading camera parameters')
 	if FLAGS.camera == 'realsense':
@@ -159,68 +149,46 @@ def main():
 		raise ValueError('Wrong type of camera')
 	print('log:camera parameter:\n'+str(cam))
 	
-	# posevectorlist format
-	# [object1 posevector,object2 posevector]
 	# object pose vector format
-	# [id,x,y,z,alpha,beta,gamma] angle in unit of degree
-	# posevectorlist[objectid] = [id,x,y,z,alpha,beta,gamma]
-	posevectorlist = getposevectorlist(objectidlist, IS_RESUME, EXPER_ID, TIME, XML_DIR)
-	models = []
-	models_ply = []
-	for i in range(len(objectidlist)):
-		models.append(None)
-		models_ply.append(None)
+	# [id, x, y, z, alpha, beta, gamma] angle in unit of degree
+	posevector = get_pose_vector(OBJ_ID, TIME, objectfilenamelist)
+	models = None
+	models_ply = None
 
 	while True:
 		moving_speed = 5
-		existed_object_file_name_list = []
-		for objectid in objectidlist:
-			existed_object_file_name_list.append(objectfilenamelist[objectid])
 
 		image, image_depth = img_from_cam()
 
 		textimage = copy.deepcopy(image)
 		textimage = cv2.putText(textimage, 'Input an intager to select ply file, 0 for exiting', (10, 30), font, font_size, font_color, font_thickness)
 		textimage = cv2.putText(textimage, '0: exit',(10, 55), font, font_size, font_color, font_thickness)
-		for i in range(len(existed_object_file_name_list)):
-			if i < 9:
-				textimage = cv2.putText(textimage, str(i+1)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 1)),font, font_size, font_color, font_thickness)
-			else:
-				textimage = cv2.putText(textimage, chr(ord('a') + i - 9)+': '+existed_object_file_name_list[i],(10, 55 + 25 * (i + 1)),font, font_size, font_color, font_thickness)
+		textimage = cv2.putText(textimage, '1: ' + objectfilenamelist[OBJ_ID],(10, 80),font, font_size, font_color, font_thickness)
 		cv2.imshow('Annotater',textimage)
 		getkey = cv2.waitKey(1)
-		no_key_flag = False
-		if getkey < ord('0') or getkey > ord('z') or (getkey < ord('a') and getkey > ord('9')):
-			no_key_flag = True
-		if no_key_flag:
+
+		if getkey < ord('0') or getkey > ord('1'):
 			continue
-		if getkey - ord('0') <= 9:
-			plyfilenumber = getkey - ord('0')
-		else:
-			plyfilenumber = getkey - ord('a') + 10
-	
-		if plyfilenumber == 0:
+			
+		if getkey == ord('0'):
 			break
-		else:
-			plyfilenumber -= 1
-		# the plyfilenumber is out of range
-		if plyfilenumber >= len(existed_object_file_name_list):
-			continue
-		[_,x,y,z,alpha,beta,gamma]=posevectorlist[plyfilenumber]
+		
+		print(posevector)
+		[_, x, y, z, alpha, beta, gamma] = posevector
 		textimage2 = copy.deepcopy(image)
-		textimage2 = cv2.putText(textimage2, 'loading model '+os.path.join(MODEL_DIR,existed_object_file_name_list[plyfilenumber]),(10, 30),font, font_size, font_color, font_thickness)
+		textimage2 = cv2.putText(textimage2, 'loading model '+os.path.join(MODEL_DIR, objectfilenamelist[OBJ_ID]), (10, 30), font, font_size, font_color, font_thickness)
 		cv2.imshow('Annotater',textimage2)
 		cv2.waitKey(5)
-		print('log:loading model '+os.path.join(MODEL_DIR,existed_object_file_name_list[plyfilenumber]))
-		if models[plyfilenumber] is None:
-			assert models_ply[plyfilenumber] is None
-			models[plyfilenumber] = loadmodel(MODEL_DIR,existed_object_file_name_list[plyfilenumber])
-			downsample_name = existed_object_file_name_list[plyfilenumber].split('.ply')[0]+'_downsample.ply'
+		print('log:loading model '+os.path.join(MODEL_DIR, objectfilenamelist[OBJ_ID]))
+		if models is None:
+			assert models_ply is None
+			models = loadmodel(MODEL_DIR, objectfilenamelist[OBJ_ID])
+			downsample_name = objectfilenamelist[OBJ_ID].split('.ply')[0]+'_downsample.ply'
 			if os.path.exists(os.path.join(MODEL_DIR,downsample_name)):
-				models_ply[plyfilenumber] = o3d.io.read_point_cloud(os.path.join(MODEL_DIR, downsample_name))
+				models_ply = o3d.io.read_point_cloud(os.path.join(MODEL_DIR, downsample_name))
 			else:
-				models_ply[plyfilenumber] = o3d.io.read_point_cloud(os.path.join(MODEL_DIR,existed_object_file_name_list[plyfilenumber]))
-				models_ply[plyfilenumber].voxel_down_sample(DOWNSAMPLE_VOXEL_SIZE_M)
+				models_ply = o3d.io.read_point_cloud(os.path.join(MODEL_DIR, objectfilenamelist[OBJ_ID]))
+				models_ply.voxel_down_sample(DOWNSAMPLE_VOXEL_SIZE_M)
 			print('log:model loaded')
 		else:
 			print('using cached model')
@@ -232,7 +200,7 @@ def main():
 		while runningflag:
 			image, image_depth = img_from_cam()
 			pose = get_mat(x,y,z, alpha, beta, gamma)
-			rendered_image=draw_model(image, pose, cam, models[plyfilenumber])
+			rendered_image=draw_model(image, pose, cam, models)
 			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d' % (x,y,z,alpha,beta,gamma,moving_speed),\
 			(20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
 			global state
@@ -243,15 +211,15 @@ def main():
 			cv2.imshow('Annotater',rendered_image)
 			cv2.waitKey(5)
 
-		posevectorlist[plyfilenumber]=[objectidlist[plyfilenumber], x, y, z, alpha, beta, gamma]
+		posevector = [OBJ_ID, x, y, z, alpha, beta, gamma]
 
 		if IS_SAVE_XML:
 			if not os.path.exists(XML_DIR):
 				print('log: create directory '+XML_DIR)
 				os.mkdir(XML_DIR)
 			mainxmlWriter = xmlWriter()
-			mainxmlWriter.objectlistfromposevectorlist(posevectorlist=posevectorlist, objdir=MODEL_DIR, objnamelist=objectfilenamelist, objidlist=objectidlist)
-			mainxmlWriter.writexml(xmlfilename=os.path.join(XML_DIR, f'{EXPER_ID}-{TIME}.xml'))
+			mainxmlWriter.objectlistfromposevectorlist(posevectorlist=[posevector], objdir=MODEL_DIR, objnamelist=objectfilenamelist, objidlist=objectidlist)
+			mainxmlWriter.writexml(xmlfilename=os.path.join(XML_DIR, f'{OBJ_ID}-{TIME}.xml'))
 
 if __name__ == '__main__':
 	main()

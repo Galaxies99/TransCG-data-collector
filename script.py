@@ -20,13 +20,22 @@ cmd_open = 'curl -X GET http://localhost:7278/PSTapi/StartTrackerDataStream'
 cmd_close = 'curl --request POST --data \'\' http://localhost:7278/PSTapi/CloseDataStream'
 
 while True:
-    client.exec_cmd_and_save(s, cmd_open, 'results/{}.json'.format(filename), display=True)
+    res, err = client.exec_cmd(s, cmd_open)
+    print(res)
     str = input('Finish getting tracker data? (y/n): ')
     if str == 'y':
         break
 
-res, err = client.exec_cmd(s, cmd_close)
-print(res)
+with open('results/{}.json'.format(filename), 'w') as fres:
+    fres.write(res)
+
+os.system('python json_formatting.py --id {} --time {}'.format(ID, TIME))
+
+# res, err = client.exec_cmd(s, cmd_close)
+# print(res)
+
 client.close(s)
 
 os.system('python annotator.py --id {} --time {}'.format(ID, TIME))
+
+os.system('python calc_transform.py --id {} --time {}'.format(ID, TIME))

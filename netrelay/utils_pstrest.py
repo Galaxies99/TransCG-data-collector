@@ -70,7 +70,7 @@ def postprocessing_data(res):
     pos = res.find('data: {')
     if pos == -1:
         raise ValueError('Not a data record!')
-    res = res[pos:]
+    res = res[pos+6:]
     data = ""
     prev = ""
     first = True

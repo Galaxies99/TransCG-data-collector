@@ -4,8 +4,9 @@ import xml.dom.minidom
 from transforms3d.quaternions import mat2quat, quat2axangle
 from transforms3d.euler import quat2euler
 import numpy as np
-from trans3d import get_mat, pos_quat_to_pose_4x4
+from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose
 import os
+import json
 
 
 class xmlWriter():
@@ -31,6 +32,7 @@ class xmlWriter():
         for i in range(len(posevectorlist)):
             id, x, y, z, alpha, beta, gamma = posevectorlist[i]
             objname = objnamelist[objidlist[i]]
+            print(objname)
             self.addobject(get_mat(x, y, z, alpha, beta, gamma),
                            objname, os.path.join(objdir, objname), id)
 
@@ -112,70 +114,29 @@ class xmlReader():
 def empty_pose_vector(objectid):
 	return [objectid, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+def get_pose_vector(objectid, times, objectfilenamelist):
+    transformation_file = 'results/transformation/{}.npy'.format(objectid)
+    if not os.path.exists(transformation_file):
+        return empty_pose_vector(objectid)
+    
+    with open(transformation_file, 'rb') as f:
+        T = np.load(f)
+    
+    json_file = 'results/{}-{}.json'.format(objectid, times)
+    assert os.path.exists(json_file)
 
-def empty_pose_vector_list(objectidlist):
-	pose_vector_list = []
-	for id in objectidlist:
-		pose_vector_list.append(empty_pose_vector(id))
-	return pose_vector_list
+    with open(json_file, 'r') as f:
+        js = json.load(f)
 
-'''
-def getposevectorlist(objectidlist, is_resume, num_frame, frame_number, xml_dir):
-    if not is_resume or (not os.path.exists(os.path.join(xml_dir, '%04d.xml' % num_frame))):
-        print('log:create empty pose vector list')
-        return empty_pose_vector_list(objectidlist)
-    else:
-        print('log:resume pose vector from ' +
-              os.path.join(xml_dir, '%04d.xml' % num_frame))
-        xmlfile = os.path.join(xml_dir, '%04d.xml' % num_frame)
-        mainxmlReader = xmlReader(xmlfile)
-        xmlposevectorlist = mainxmlReader.getposevectorlist()
-        posevectorlist = []
-        for objectid in objectidlist:
-            posevector = [objectid, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            for xmlposevector in xmlposevectorlist:
-                if xmlposevector[0] == objectid:
-                    posevector = xmlposevector
-            posevectorlist.append(posevector)
-        return posevectorlist
+    obj_name, _ = os.path.splitext(objectfilenamelist[objectid])
 
-
-def getframeposevectorlist(objectidlist, is_resume, frame_number, xml_dir):
-    frameposevectorlist = []
-    for num_frame in range(frame_number):
-        if not is_resume or (not os.path.exists(os.path.join(xml_dir,'%04d.xml' % num_frame))):
-            posevectorlist=getposevectorlist(objectidlist,False,num_frame,frame_number,xml_dir)	
-        else:
-            posevectorlist=getposevectorlist(objectidlist,True,num_frame,frame_number,xml_dir)
-        frameposevectorlist.append(posevectorlist)
-    return frameposevectorlist
-'''
-
-def getposevectorlist(objectidlist, is_resume, id, times, xml_dir):
-    exist_last = False
-    filename = '{}-{}.xml'.format(id, times)
-    if not os.path.exists(os.path.join(xml_dir, filename)):
-        if times != 0:
-            filename = '{}-{}.xml'.format(id, times - 1)
-            if os.path.exists(os.path.join(xml_dir, filename)):
-                exist_last = True
-    else:
-        exist_last = True
-    if not is_resume or (not exist_last):
-        print('log:create empty pose vector list')
-        return empty_pose_vector_list(objectidlist)
-    else:
-        print('log:resume pose vector from ' +
-              os.path.join(xml_dir, filename))
-        xmlfile = os.path.join(xml_dir, filename)
-        mainxmlReader = xmlReader(xmlfile)
-        xmlposevectorlist = mainxmlReader.getposevectorlist()
-        posevectorlist = []
-        for objectid in objectidlist:
-            posevector = [objectid, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
-            for xmlposevector in xmlposevectorlist:
-                if xmlposevector[0] == objectid:
-                    posevector = xmlposevector
-            posevectorlist.append(posevector)
-        return posevectorlist
-
+    js = js['TrackerData']['TargetPoses']
+    obj_found = False
+    for sub_js in js:
+        if sub_js['TargetPose']['name'] == obj_name:
+            T_tracker_marker = np.array(sub_js['TargetPose']['TransformationMatrix']).reshape(4, 4)
+            obj_found = True
+    print(T)
+    T_initial = T.dot(T_tracker_marker)
+    x, y, z, alpha, beta, gamma = get_pose(T_initial)
+    return [objectid, x, y, z, alpha, beta, gamma]
