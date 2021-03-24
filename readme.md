@@ -46,16 +46,29 @@ python camera/[Camera Version].py
 
 Here, replace `[Camera Version]` with your RGB-D camera version. Currently, `realsense_D435` and `realsense_L515` are supported.
 
-**Step 3**. Run the following command and begin annotation.
+**Step 3**. Run the following command to perform calibration between camera and tracker.
 
 ```bash
-python scripy.py --id [Object ID] --time [Times of sampling] --ip [IP Address] --port [Port]
+cd calibration
+python calibration.py
+```
+
+This calibration process uses `aruco` to perform camera calibration. Combining with the data reading from tracker, the calibration process can calculate the transformation matrix between tracker and camera, which will be stored in file `configs/T_tracker_camera.npy`.
+
+The script will first detect the pose data of aruco picture from camera, then fetch the tracker data from the Windows computer, and then display it on the screen. You can type `y` if you are satisfied with the tracking data, and go to the annotation stage; or `n` if you are not satisfied with the data, and the script will fetch tracker data again and repeat the previous process.
+
+**Notice**. Make sure to use aruco 7x7 database and pictures with id 0.
+
+**Step 4**. Run the following command and begin annotation.
+
+```bash
+python script.py --id [Object ID] --time [Times of sampling] --ip [IP Address] --port [Port]
 ```
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[Times of samping]` with the current times of sampling (0-based), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. Here is the execution process of the script.
 
 - The script will first fetch the tracker data from the Windows computer, and then display it on the screen. You can type `y` if you are satisfied with the tracking data, and go to the annotation stage; or `n` if you are not satisfied with the data, and the script will fetch tracker data again and repeat the previous process.
-
 - After you enter in the annotation stage, a GUI window will be displayed on the screen. You can annotate the data according to the guide on the top-left of the window.
+- When `time` is `0`, you may perform the annotation process from beginning. Otherwise, the program will calculate the pose according to the pose reading from tracker, and then you just need to fine-tune it.
 
 **Notice**. The camera will capture real-time images, so in order to get a correct 6dpose, make sure that the camera won't move during annotation.
