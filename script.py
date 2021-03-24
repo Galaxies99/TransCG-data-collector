@@ -1,6 +1,8 @@
 import os
+import json
 import argparse
 import netrelay.client_pstrest as client
+from jsonhandler import formatter_str
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default=0, help='Object ID', type=int)
@@ -27,9 +29,8 @@ while True:
         break
 
 with open('results/{}.json'.format(filename), 'w') as fres:
-    fres.write(res)
-
-os.system('python json_formatting.py --id {} --time {}'.format(ID, TIME))
+    res = formatter_str(res)
+    json.dump(res, fres)
 
 # res, err = client.exec_cmd(s, cmd_close)
 # print(res)

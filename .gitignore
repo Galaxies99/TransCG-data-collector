@@ -9,6 +9,7 @@ preprocessing/rawdata/
 preprocessing/use_t2v_list.txt
 */__pycache__/
 results_old/
+calibration/img.png
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

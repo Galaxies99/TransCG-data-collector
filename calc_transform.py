@@ -4,6 +4,7 @@ import argparse
 import numpy as np
 from trans3d import get_mat
 from xmlhandler import xmlReader
+from jsonhandler import find_obj
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default=0, help='Object ID', type=int)
@@ -27,32 +28,24 @@ obj_name, _ = os.path.splitext(objectfilenamelist[ID])
 with open('results/{}.json'.format(filename), 'r') as f:
     js = json.load(f)
 
-js = js['TrackerData']['TargetPoses']
-
-obj_found = False
-for sub_js in js:
-    if sub_js['TargetPose']['name'] == obj_name:
-        T_tracker_marker = np.array(sub_js['TargetPose']['TransformationMatrix']).reshape(4, 4)
-        obj_found = True
-
-if not obj_found:
-    raise ValueError('Object not found in {}.json!'.format(filename))
+T_tracker_marker = find_obj(js, obj_name)
 
 rd = xmlReader('results/{}.xml'.format(filename))
 [[_, x, y, z, alpha, beta, gamma]] = rd.getposevectorlist()
 T_camera_object = get_mat(x, y, z, alpha, beta, gamma)
 
+T_tracker_camera = np.load('configs/T_tracker_camera.npy')
+
 print('Caclulating the transformation matrix ...')
 try:
-    T = T_camera_object.dot(np.linalg.inv(T_tracker_marker))
+    T_marker_object = (np.linalg.inv(T_tracker_marker).dot(T_tracker_camera)).dot(T_camera_object)
 except Exception:
     print(e.values)
     exit()
 
-
-print('The transformation matrix is: ', T)
+print('The transformation matrix is: ', T_marker_object)
 print('Save the transformation matrix to file results/transformation/{}.npy'.format(ID))
 
 with open('results/transformation/{}.npy'.format(ID), 'wb') as f:
-    np.save(f, np.array(T))
+    np.save(f, np.array(T_marker_object))
 

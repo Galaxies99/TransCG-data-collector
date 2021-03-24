@@ -5,6 +5,7 @@ from transforms3d.quaternions import mat2quat, quat2axangle
 from transforms3d.euler import quat2euler
 import numpy as np
 from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose
+from jsonhandler import find_obj
 import os
 import json
 
@@ -114,13 +115,14 @@ class xmlReader():
 def empty_pose_vector(objectid):
 	return [objectid, 0.0, 0.0, 0.0, 0.0, 0.0, 0.0]
 
+
 def get_pose_vector(objectid, times, objectfilenamelist):
     transformation_file = 'results/transformation/{}.npy'.format(objectid)
     if not os.path.exists(transformation_file):
         return empty_pose_vector(objectid)
     
-    with open(transformation_file, 'rb') as f:
-        T = np.load(f)
+    T_marker_object = np.load(transformation_file)
+    T_tracker_camera = np.load('configs/T_tracker_camera.npy')
     
     json_file = 'results/{}-{}.json'.format(objectid, times)
     assert os.path.exists(json_file)
@@ -129,14 +131,8 @@ def get_pose_vector(objectid, times, objectfilenamelist):
         js = json.load(f)
 
     obj_name, _ = os.path.splitext(objectfilenamelist[objectid])
-
-    js = js['TrackerData']['TargetPoses']
-    obj_found = False
-    for sub_js in js:
-        if sub_js['TargetPose']['name'] == obj_name:
-            T_tracker_marker = np.array(sub_js['TargetPose']['TransformationMatrix']).reshape(4, 4)
-            obj_found = True
-    print(T)
-    T_initial = T.dot(T_tracker_marker)
-    x, y, z, alpha, beta, gamma = get_pose(T_initial)
+    T_tracker_marker = find_obj(js, obj_name)
+    
+    T_camera_object_initial = (np.linalg.inv(T_tracker_camera).dot(T_tracker_marker)).dot(T_marker_object)
+    x, y, z, alpha, beta, gamma = get_pose(T_camera_object_initial)
     return [objectid, x, y, z, alpha, beta, gamma]

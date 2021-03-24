@@ -56,9 +56,6 @@ runningflag = True
 state = 'normal'
 DOWNSAMPLE_VOXEL_SIZE_M = 0.005
 
-# camera
-camera = RealSenseCamera()
-
 def on_press(key):
 	global x,y,z,alpha,beta,gamma,runningflag,moving_speed
 	global state
