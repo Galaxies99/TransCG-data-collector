@@ -9,14 +9,22 @@ import threading
 import subprocess
 from .utils import parse_argv_relay
 from .utils_pstrest import parse_curl
-from multiprocessing import shared_memory
 
 header_buf_size = 4
 char_buf_size = 1
 
 MAX_CALL = 1
 max_call = MAX_CALL
-shm = shared_memory.ShareableList(name='curl_result')
+def callback(data):
+    global max_call, call_buf
+    if max_call > 0:
+        if max_call == MAX_CALL:
+            call_buf = data
+        else:
+            call_buf = call_buf + data
+        max_call -= 1
+    else:
+        return -1
 
 
 def exec_conn(conn, addr, id):
@@ -36,10 +44,22 @@ def exec_conn(conn, addr, id):
         cmd = cmd.decode('utf-8')
         print('[Log (ID: %d)] (1/3) Receive command' % id, cmd)
         # Execute command and get result.
-        if cmd == 'GetTracker':
-            res = shm[0].decode('utf-8')
+        res = ''
+        name, args, cmd_type = parse_curl(cmd)
+        if cmd_type == -1 or len(name) != len(args):
+            res = 'Not a supported curl command.'
         else:
-            raise ValueError('No such commands')
+            c = pycurl.Curl()
+            for i in range(len(name)):
+                c.setopt(name[i], args[i])
+            max_call = MAX_CALL
+            c.setopt(pycurl.WRITEFUNCTION, callback)
+            try:
+                c.perform()
+            except pycurl.error:
+                pass
+            c.close()
+            res = call_buf.decode('utf-8')
         print('[Log (ID: %d)] (2/3) Finish executing' % id)
         # Send back result.
         res = res.encode('utf-8')

@@ -27,29 +27,22 @@ def exec_cmd(s, cmd):
     res = "".encode('utf-8')
     while len(res) < size:
         res = res + s.recv(char_buf_size)
-    size = struct.unpack('i', s.recv(header_buf_size))[0]
-    err = "".encode('utf-8')
-    while len(err) < size:
-        err = err + s.recv(char_buf_size)
-    return res.decode('utf-8'), err.decode('utf-8')
+    return res.decode('utf-8')
 
 
-def exec_cmd_and_save(s, cmd, res_dir, err_dir=None, display=False):
-    res, err = exec_cmd(s, cmd)    
+def exec_cmd_and_save(s, cmd, res_dir, display=False):
+    res = exec_cmd(s, cmd)
     if display:
         print(res)
     with open(res_dir, "w") as fres:
         fres.write(res)
-    if err_dir is not None:
-        with open(err_dir, "w") as ferr:
-            ferr.write(err)
 
 
 def close(s):
     s.close()
 
 
-def exec_client(dst_addr, with_err=False):
+def exec_client(dst_addr, filename, with_err=False):
     s, _ = start(dst_addr)
     while True:
         # Read commands from input
@@ -57,23 +50,15 @@ def exec_client(dst_addr, with_err=False):
         if cmd == "exit":
             break
         # Execute the commands on remote
-        res, err = exec_cmd(s, cmd)
-        print(res)
-        if with_err:
-            if len(err) != 0:
-                print('[stderr msg]')
-                print(err)
-        else:
-            if len(res) == 0 and len(err) != 0:
-                print('[stderr msg]')
-                print(err)
+        exec_cmd_and_save(s, cmd, 'results/{}.json'.format(filename), display=True)
     close(s)
 
 
-def main(argv):
+def main(argv, filename):
     dst_addr, err = parse_argv_client(argv)
-    exec_client(dst_addr, err)
+    exec_client(dst_addr, filename, err)
 
 
 if __name__ == '__main__':
-    main(sys.argv[1:])
+    filename = input('Please input filename (.json format): ')
+    main(sys.argv[1:], filename)
