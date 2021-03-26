@@ -9,26 +9,12 @@ from jsonhandler import find_obj
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default=0, help='Object ID', type=int)
 parser.add_argument('--time', default=0, help='Times of sampling', type=int)
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
 FLAGS = parser.parse_args()
 ID = FLAGS.id
 TIME = FLAGS.time
-OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
-
-objectfilenamelist = []
-with open(OBJECT_FILE_NAME_LIST_FILE_NAME, 'r') as f:
-	lines = f.readlines()
-	for line in lines:
-		if not (line == '\n'):
-			objectfilenamelist.append(line.replace('\n', '').replace('\r', ''))
-
 filename = '{}-{}'.format(ID, TIME)
-obj_name, _ = os.path.splitext(objectfilenamelist[ID])
 
-with open('results/{}.json'.format(filename), 'r') as f:
-    js = json.load(f)
-
-T_tracker_marker = find_obj(js, obj_name)
+T_tracker_marker = np.load('results/{}.npy'.format(filename))
 
 rd = xmlReader('results/{}.xml'.format(filename))
 [[_, x, y, z, alpha, beta, gamma]] = rd.getposevectorlist()
