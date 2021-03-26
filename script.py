@@ -1,7 +1,7 @@
 import os
 import json
 import argparse
-import netrelay.client_pstrest as client
+import netrelay.client as client
 from jsonhandler import formatter_str
 
 parser = argparse.ArgumentParser()
@@ -18,11 +18,10 @@ PORT = FLAGS.port
 filename = '{}-{}'.format(ID, TIME)
 
 s, id = client.start((IP, PORT))
-cmd_open = 'curl -X GET http://localhost:7278/PSTapi/StartTrackerDataStream'
-cmd_close = 'curl --request POST --data \'\' http://localhost:7278/PSTapi/CloseDataStream'
+cmd_tracker = 'GetTracker'
 
 while True:
-    res, err = client.exec_cmd(s, cmd_open)
+    res = client.exec_cmd(s, cmd_tracker)
     print(res)
     str = input('Finish getting tracker data? (y/n): ')
     if str == 'y':
@@ -31,9 +30,6 @@ while True:
 with open('results/{}.json'.format(filename), 'w') as fres:
     res = formatter_str(res)
     json.dump(res, fres)
-
-# res, err = client.exec_cmd(s, cmd_close)
-# print(res)
 
 client.close(s)
 

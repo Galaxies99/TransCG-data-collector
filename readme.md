@@ -26,16 +26,20 @@ Here, replace `[Your MeshLab Server Path]` with your own MeshLab Server path, us
 
 ## Run
 
-**Step 1**. Connect the PST tracker with a computer in Windows system, and run PST REST Server according to the documentation of PST tracker. Then execute the following commands in the Windows command line.
+**Step 1**. Connect the PST tracker with a computer in Windows system, and run PST REST Server according to the documentation of PST tracker. Then run the following command, and keep the running program in background. 
 
 ```bash
-curl --header "Content-Type: application/json" --request POST --data "{}" http://localhost:7278/PSTapi/Start
-python netrelay/relay_pstrest.py -s [IP Address]:[Port]
+python -m netrelay.stream
+```
+After that, run the followng command to start the relay server.
+
+```bash
+python -m netrelay.relay_stream -s [IP Address]:[Port]
 ```
 
 Notice that:
 
-- The first command should return a log `{"message": "Server Started"}` in the screen, otherwise you may need to check the connection between the PST tracker and the computer.
+- The first command should output a log `{"message": "Server Started"}` in the screen, otherwise you may need to check the connection between the PST tracker and the computer.
 - Replace the `[IP Address]` and the `[Port]` in the second command with the specific IP address and port of the computer (you may need to execute `ipconfig` to get the IP address).
 
 **Step 2**. Run the following command, and keep the running program in background. 

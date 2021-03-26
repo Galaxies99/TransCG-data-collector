@@ -26,7 +26,7 @@ def find_obj(js, obj_name):
             T = np.array(sub_js['TargetPose']['TransformationMatrix']).reshape(4, 4)
             obj_found = True
     if not obj_found:
-        raise ValueError('Object not found in {}.json!'.format(filename))  
+        raise ValueError('Object not found!')  
     return T
 
 
