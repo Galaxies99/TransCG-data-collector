@@ -8,7 +8,6 @@ import open3d as o3d
 from pynput import keyboard
 from renderer import Renderer,draw_model
 from camera.camera import RealSenseCamera
-from frame_transform import frameTransformer
 from model import Model3D, loadmodel, cachemodel
 from transforms3d.euler import quat2euler, euler2quat
 from transforms3d.quaternions import mat2quat, quat2mat
