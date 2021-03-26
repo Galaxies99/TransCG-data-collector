@@ -3,6 +3,7 @@ vispy
 pyqt5
 PyOpenGL
 opencv-python
+opencv-contrib-python
 transforms3d
 scipy
 plyfile
