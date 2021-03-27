@@ -54,9 +54,10 @@ alpha, beta, gamma = 0.0, 0.0, 0.0
 runningflag = True
 state = 'normal'
 DOWNSAMPLE_VOXEL_SIZE_M = 0.005
+transparency = 0.5
 
 def on_press(key):
-	global x,y,z,alpha,beta,gamma,runningflag,moving_speed
+	global x, y, z, alpha, beta, gamma, runningflag, moving_speed, transparency
 	global state
 	if state == 'normal':
 		try:		
@@ -95,6 +96,12 @@ def on_press(key):
 			elif key.char == '[':
 				if moving_speed > 1:
 					moving_speed /= 5
+			elif key.char == '.':
+				if transparency <= 0.9:
+					transparency += 0.1
+			elif key.char == ',':
+				if transparency >= 0.1:
+					transparency -= 0.1
 		except AttributeError:
 			if key == keyboard.Key.enter:
 				state = 'confirm'
@@ -117,7 +124,7 @@ def img_from_cam():
 
 
 def main():
-	global runningflag, x, y, z, alpha, beta, gamma
+	global runningflag, x, y, z, alpha, beta, gamma, transparency
 	global moving_speed
 	
 	font_size = 0.5
@@ -195,8 +202,9 @@ def main():
 		
 		while runningflag:
 			image, image_depth = img_from_cam()
-			pose = get_mat(x,y,z, alpha, beta, gamma)
-			rendered_image=draw_model(image, pose, cam, models)
+			pose = get_mat(x, y, z, alpha, beta, gamma)
+			rendered_image = draw_model(image, pose, cam, models)
+			rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
 			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d' % (x,y,z,alpha,beta,gamma,moving_speed),\
 			(20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
 			global state

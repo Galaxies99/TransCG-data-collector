@@ -124,14 +124,10 @@ def get_pose_vector(objectid, times, objectfilenamelist):
     T_marker_object = np.load(transformation_file)
     T_tracker_camera = np.load('configs/T_tracker_camera.npy')
     
-    json_file = 'results/{}-{}.json'.format(objectid, times)
-    assert os.path.exists(json_file)
+    npy_file = 'results/{}-{}.npy'.format(objectid, times)
+    assert os.path.exists(npy_file)
 
-    with open(json_file, 'r') as f:
-        js = json.load(f)
-
-    obj_name, _ = os.path.splitext(objectfilenamelist[objectid])
-    T_tracker_marker = find_obj(js, obj_name)
+    T_tracker_marker = np.load(npy_file)
     
     T_camera_object_initial = (np.linalg.inv(T_tracker_camera).dot(T_tracker_marker)).dot(T_marker_object)
     x, y, z, alpha, beta, gamma = get_pose(T_camera_object_initial)
