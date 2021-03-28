@@ -63,7 +63,7 @@ The script will first detect the pose data of aruco picture from camera, then fe
 
 **Notice**. Make sure to use aruco 7x7 database and pictures with id 0.
 
-**Step 4**. Run the following command and begin annotation.
+**Step 4**. Execute the following command and begin annotation.
 
 ```bash
 python script.py --id [Object ID] --time [Times of sampling] --ip [IP Address] --port [Port]
@@ -76,3 +76,13 @@ Here, replace the `[Object ID]` with the current object ID (0-based, the same or
 - When `time` is `0`, you may perform the annotation process from beginning. Otherwise, the program will calculate the pose according to the pose reading from tracker, and then you just need to fine-tune it.
 
 **Notice**. The camera will capture real-time images, so in order to get a correct 6dpose, make sure that the camera won't move during annotation.
+
+## Evaluate the Annotation
+
+Follow the Step 1 to Step 3 in the "Run" section, then run the following program to evaluate your annotation in real-time.
+
+```bash
+python eval_realtime.py --id [Object ID] --ip [IP Address] --port [Port]
+```
+
+Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. After several seconds, you will see real-time evluation image captured by the tracker on the screen.
