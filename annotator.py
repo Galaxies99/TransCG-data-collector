@@ -205,7 +205,7 @@ def main():
 			pose = get_mat(x, y, z, alpha, beta, gamma)
 			rendered_image = draw_model(image, pose, cam, models)
 			rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
-			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d' % (x,y,z,alpha,beta,gamma,moving_speed),\
+			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d transparency %.1f' % (x,y,z,alpha,beta,gamma,moving_speed, transparency),\
 			(20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
 			global state
 
