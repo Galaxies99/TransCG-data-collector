@@ -45,7 +45,6 @@ OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
 OBJ_ID = FLAGS.id
 
 # global variables
-moving_speed = 5
 x, y, z = 0.0, 0.0, 0.0
 alpha, beta, gamma = 0.0, 0.0, 0.0
 runningflag = True
@@ -86,7 +85,6 @@ def img_from_cam():
 
 def main():
 	global runningflag, x, y, z, alpha, beta, gamma, transparency
-	global moving_speed
 	
 	font_size = 0.5
 	font_thickness = 1
@@ -119,8 +117,6 @@ def main():
 	posevector = get_pose_vector(OBJ_ID, 0, objectfilenamelist)
 	models = None
 	models_ply = None
-
-	moving_speed = 5
 
 	image, image_depth = img_from_cam()
 
@@ -175,7 +171,7 @@ def main():
 		else:
 			rendered_image = draw_model(image, pose, cam, models)
 			rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
-			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d moving speed:%d' % (x, y, z, alpha, beta, gamma, moving_speed),\
+			rendered_image = cv2.putText(rendered_image, 'x:%.3f y:%.3f z:%.3f alpha:%d beta:%d gamma:%d' % (x, y, z, alpha, beta, gamma),\
 				(20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
 
 		global state
