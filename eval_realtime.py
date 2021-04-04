@@ -119,11 +119,9 @@ def main():
 	
 	image, image_depth = img_from_cam()
 
-	print('log:loading models...')
 	if models == []:
 		for obj_id in obj_id_list:
-			obj_filename = objectfilenamelist[obj_id]
-			models.append(loadmodel(MODEL_DIR, obj_filename))
+			models.append(None)
 	else:
 		print('using cached model')
     
@@ -139,8 +137,10 @@ def main():
 	while runningflag:
 		image, image_depth = img_from_cam()
 		tracker_res = client.exec_cmd(s, cmd_tracker)
-		tracker_js = formatter_str(tracker_res)
-
+		try:
+			tracker_js = formatter_str(tracker_res)
+		except ValueError:
+			continue
 		rendered_image = image
 		for i, obj_id in enumerate(obj_id_list):
 			notfound = False
@@ -159,7 +159,10 @@ def main():
 	
 			if not notfound:
 				T_camera_object = (np.linalg.inv(T_tracker_camera).dot(T_tracker_marker)).dot(T_marker_object)
-				rendered_image = draw_model(image, T_camera_object, cam, models[i])
+				if models[i] is None:
+					print('log: loading model', obj_filename)
+					models[i] = loadmodel(MODEL_DIR, obj_filename)
+				rendered_image = draw_model(rendered_image, T_camera_object, cam, models[i])
 
 		rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
 		rendered_image = cv2.putText(rendered_image, 'Transparency: %.1f' % transparency, (20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
