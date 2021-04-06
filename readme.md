@@ -1,6 +1,6 @@
 # 6dPose Annotator for Camera
 
-This project is initially developed by [Minghao Gou](https://github.com/GouMinghao) and then modified by [Tony Fang](https://github.com/Galaxies99). This project aims to develop a convenient manual annotator when raw models and scenes are given. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
+This project is initially developed by [Minghao Gou](https://github.com/GouMinghao) and then modified by [Tony Fang](https://github.com/Galaxies99). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
 
 ## Preparation
 
@@ -77,12 +77,57 @@ Here, replace the `[Object ID]` with the current object ID (0-based, the same or
 
 **Notice**. The camera will capture real-time images, so in order to get a correct 6dpose, make sure that the camera won't move during annotation.
 
-## Evaluate the Annotation
+## Annotation Evaluation
 
-Follow the Step 1 to Step 3 in the "Run" section, then run the following program to evaluate your annotation in real-time.
+Follow the Step 1 to Step 3 in the "Run" section, then run the following script to evaluate your annotation in real-time.
 
 ```bash
 python eval_realtime.py --id [Object ID] --ip [IP Address] --port [Port]
 ```
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. After several seconds, you will see real-time evluation image captured by the tracker on the screen.
+
+Notice that you can also ignore the `--id [Object ID]` arguments. By doing so, the evaluate process will detect the objects automatically and load the corresponding models.
+
+## Data Collection
+
+After annotating all the objects you need for constructing data, run the following script to collects the data.
+
+```bash
+python data_collector.py --id [Scene_ID]
+```
+
+This script will read photo stream from two separate cameras: Realsense D435 and Realsense L515. So make sure to run the following commands on background.
+
+```bash
+python camera/realsense_D435.py
+python camera/realsense_L515.py
+```
+
+Once you are satisfied with the picture and the models shown on the screen, you can press Enter to save one shot of this screen. You can also press `,` or `.` to increase or decrease the transparency of the objects respectively. By pressing `q`, you can finish the collection of this scene. The data will be collected in the following form.
+
+```
+data
+├── scene1
+|   ├── 0
+|   |   ├── image1.png
+|   |   ├── image2.png
+|   |   ├── image_depth1.png
+|   |   ├── image_depth2.png
+|   |   └── pose
+|   |       ├── 0.npy
+|   |       ├── 23.npy
+|   |       └── ...
+|   └── ...
+├── scene2
+|   └── ...
+└── ...
+```
+
+- `image1.png` and `image_depth1.png` are the RGB image and the depth image read from Realsense D435;
+- `image2.png` and `image_depth2.png` are the RGB image and the depth image read from Realsense L515;
+- `pose` contains are the objects detected in `image1.png`; `[ID].npy` denotes the pose of object numbered `[ID]` in the picture.
+
+## Maintenance
+
+Mailto: galaxies@sjtu.edu.cn

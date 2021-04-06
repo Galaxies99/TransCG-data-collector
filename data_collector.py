@@ -84,7 +84,7 @@ def on_press(key):
 						continue
 					else:
 						np.save(os.path.join(POSE_DIR, '{}.npy'.format(i)), p)
-				print('log: finish saving data')
+				print('log: finish saving data {}'.format(times_id))
 				times_id += 1
 			else:
 				pass
