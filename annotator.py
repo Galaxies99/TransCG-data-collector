@@ -19,7 +19,7 @@ parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='models', help='ply model files directory path')
 parser.add_argument('--save_xml',default='True',help='True for saving xml, False for not saving xml, when checking the result, this arg should be set as False')
 parser.add_argument('--xml_dir',default='results',help='output xml file directory')
-parser.add_argument('--camera',default='realsense',help='realsense or kinect')
+parser.add_argument('--camera',default='realsense_D435',help='realsense_D435 or realsense_L515')
 parser.add_argument('--id', default=0, help='The object ID', type=int)
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
 parser.add_argument('--time',default=0,help='time', type=int)
@@ -33,12 +33,12 @@ elif FLAGS.save_xml == 'False':
 else:
 	raise ValueError('Invalid input for argument "save_xml"\n"save_xml" should be True or False')
 
-if FLAGS.camera == 'realsense':
-	camera = RealSenseCamera()
-elif FLAGS.camera == 'kinect':
-	pass
+if FLAGS.camera == 'realsense_D435':
+	camera = RealSenseCamera(type='D435')
+elif FLAGS.camera == 'realsense_L515':
+	camera = RealSenseCamera(type='L515')
 else:
-	raise ValueError('Invalid input for argument "camera"\n"camera" should be realsense or kinect')
+	raise ValueError('Invalid input for argument "camera"\n"camera" should be realsense_D435 or realsense_L515.')
 
 
 MODEL_DIR=FLAGS.model_dir
@@ -144,9 +144,9 @@ def main():
 	objectidlist=[OBJ_ID]
     
 	print('log:loading camera parameters')
-	if FLAGS.camera == 'realsense':
+	if 'realsense' in FLAGS.camera:
 		cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
-	elif FLAGS.camera == 'kinect':
+	elif 'kinect' in FLAGS.camera:
 		cam = np.array([631.54864502,0.0,638.43517329,0.,631.20751953,366.49904066,0.0,0.0,1.0]).reshape((3, 3))
 	else:
 		raise ValueError('Wrong type of camera')

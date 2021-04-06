@@ -19,27 +19,26 @@ from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose, pose_4x4_rotation
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='models', help='ply model files directory path')
-parser.add_argument('--res_dir',default='results',help='output file directory')
-parser.add_argument('--camera',default='realsense_D435',help='realsense_D435 or realsense_L515')
+parser.add_argument('--data_dir',default='data',help='data directory')
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--id', default=-1, help='The object ID, -1 for all objects', type=int)
+parser.add_argument('--id', default=-1, help='the data ID')
 parser.add_argument('--ip', default='10.52.25.177', help='IP address of the computer with Windows system', type=str)
 parser.add_argument('--port', default=23333, help='The port that are used in netrelay', type=int)
 FLAGS = parser.parse_args()
 
-RES_DIR = FLAGS.res_dir
+DATA_DIR = FLAGS.data_dir
+if os.path.exists(DATA_DIR) == False:
+	os.mkdir(DATA_DIR)
 IP = FLAGS.ip
-PORT = FLAGS.port
 ID = FLAGS.id
-
-if FLAGS.camera == 'realsense_D435':
-	camera = RealSenseCamera(type='D435')
-elif FLAGS.camera == 'realsense_L515':
-	camera = RealSenseCamera(type='L515')
-else:
-	raise ValueError('Invalid input for argument "camera"\n"camera" should be realsense_D435 or realsense_L515.')
-
+PORT = FLAGS.port
+camera1 = RealSenseCamera(type='D435')
+camera2 = RealSenseCamera(type='L515')
 MODEL_DIR=FLAGS.model_dir
+DATA_DIR = os.path.join(DATA_DIR, 'scene{}'.format(ID))
+if os.path.exists(DATA_DIR) == False:
+	os.mkdir(DATA_DIR)
+times_id = 0
 
 OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
 
@@ -50,10 +49,13 @@ runningflag = True
 state = 'normal'
 DOWNSAMPLE_VOXEL_SIZE_M = 0.005
 transparency = 0.5
+image, image2, image_depth, image_depth2 = None, None, None, None
+pose = []
 
 def on_press(key):
 	global transparency, runningflag
-	global state
+	global state    
+	global image, image2, image_depth, image_depth2, pose, times_id
 	if state == 'normal':
 		try:		
 			if key.char == '.':
@@ -65,7 +67,27 @@ def on_press(key):
 			elif key.char == 'q':
 				state = 'quit'
 		except AttributeError:
-			pass
+			if key == keyboard.Key.enter:
+				print('log: saving data')
+				CUR_DATA_DIR = os.path.join(DATA_DIR, str(times_id))
+				if os.path.exists(CUR_DATA_DIR) == False:
+					os.mkdir(CUR_DATA_DIR)
+				POSE_DIR = os.path.join(CUR_DATA_DIR, 'pose')
+				if os.path.exists(POSE_DIR) == False:
+					os.mkdir(POSE_DIR)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb1.png'), image)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb2.png'), image2)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1.png'), image_depth)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2.png'), image_depth2)
+				for i, p in enumerate(pose):
+					if p is None:
+						continue
+					else:
+						np.save(os.path.join(POSE_DIR, '{}.npy'.format(i)), p)
+				print('log: finish saving data')
+				times_id += 1
+			else:
+				pass
 	if state == 'quit':
 		runningflag = False
 		return False
@@ -75,7 +97,7 @@ def on_release(key):
 	pass
 
 
-def img_from_cam():
+def img_from_cam(camera):
 	image, image_depth = camera.get_rgbd()
 	image = (image * 255).astype(np.uint8)
 	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
@@ -84,6 +106,7 @@ def img_from_cam():
 
 def main():
 	global runningflag, transparency
+	global image, image2, image_depth, image_depth2, pose
 	
 	font_size = 0.5
 	font_thickness = 1
@@ -99,25 +122,13 @@ def main():
 	print('log:loaded object file name list:',end='')
 	print(objectfilenamelist)
 
-	obj_id_list = []
-	if ID != -1:
-		obj_id_list.append(ID)
-	else:
-		obj_id_list = range(len(objectfilenamelist))
+	obj_id_list = range(len(objectfilenamelist))
     
-	print('log:loading camera parameters')
-	if 'realsense' in FLAGS.camera:
-		cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
-	elif 'kinect' in FLAGS.camera:
-		cam = np.array([631.54864502,0.0,638.43517329,0.,631.20751953,366.49904066,0.0,0.0,1.0]).reshape((3, 3))
-	else:
-		raise ValueError('Wrong type of camera')
-	print('log:camera parameter:\n'+str(cam))
+	cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
 	
 	models = []
+	pose = [None] * len(obj_id_list)
 	models_ply = None
-	
-	image, image_depth = img_from_cam()
 
 	if models == []:
 		for obj_id in obj_id_list:
@@ -135,7 +146,8 @@ def main():
 	listener.start()
 		
 	while runningflag:
-		image, image_depth = img_from_cam()
+		image, image_depth = img_from_cam(camera1)
+		image2, image_depth2 = img_from_cam(camera2)
 		tracker_res = client.exec_cmd(s, cmd_tracker)
 		try:
 			tracker_js = formatter_str(tracker_res)
@@ -163,10 +175,15 @@ def main():
 					print('log: loading model', obj_filename)
 					models[i] = loadmodel(MODEL_DIR, obj_filename)
 				rendered_image = draw_model(rendered_image, T_camera_object, cam, models[i])
+				pose[i] = T_camera_object
+			else:
+				pose[i] = None
 
 		rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
 		rendered_image = cv2.putText(rendered_image, 'Transparency: %.1f' % transparency, (20, image.shape[0] - 10),font, font_size, font_color, font_thickness)
-		cv2.imshow('Evaluator', rendered_image)
+		t_image = cv2.resize(image2, (320, 180))
+		cv2.imshow('Evaluator - D435 & Pose', rendered_image)
+		cv2.imshow('Evaluator - L515', t_image)
 		cv2.waitKey(5)
 
 	client.close(s)

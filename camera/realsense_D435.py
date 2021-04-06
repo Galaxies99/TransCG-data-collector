@@ -14,12 +14,12 @@ else:
         depths = camera.get_depth_image()
         
 
-shm_depth = shared_memory.SharedMemory(name='realsense_depth', create=True, size=depths.nbytes)
+shm_depth = shared_memory.SharedMemory(name='realsense_depth_D435', create=True, size=depths.nbytes)
 depthbuf = np.ndarray(depths.shape, dtype=depths.dtype, buffer=shm_depth.buf)
 
 if DEBUG:
     colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
-    shm_color = shared_memory.SharedMemory(name='realsense_color', create=True, size=colors.nbytes)
+    shm_color = shared_memory.SharedMemory(name='realsense_color_D435', create=True, size=colors.nbytes)
     colorbuf = np.ndarray(colors.shape, dtype=colors.dtype, buffer=shm_color.buf)
 
 try:

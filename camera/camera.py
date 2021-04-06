@@ -6,10 +6,10 @@ import numpy as np
 import cv2
 
 class RealSenseCamera(object):
-    def __init__(self, resolution=(1280, 720)):
+    def __init__(self, type='D435', resolution=(1280, 720)):
         self.resolution = resolution
-        self.existing_shm_color = shared_memory.SharedMemory(name='realsense_color')
-        self.existing_shm_depth = shared_memory.SharedMemory(name='realsense_depth')
+        self.existing_shm_color = shared_memory.SharedMemory(name='realsense_color_{}'.format(type))
+        self.existing_shm_depth = shared_memory.SharedMemory(name='realsense_depth_{}'.format(type))
     
     def get_rgbd(self):
         '''
