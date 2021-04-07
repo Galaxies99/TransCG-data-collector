@@ -6,7 +6,7 @@ import numpy as np
 from marker_calibrate import aruco_detector
 sys.path.append(os.path.dirname(sys.path[0]))
 from camera.camera import RealSenseCamera
-import netrelay.client_pstrest as client
+import netrelay.client as client
 from jsonhandler import formatter_str, find_obj
 
 
@@ -43,18 +43,14 @@ for i in range(TIMES):
     mat = aruco_detector(MARKER_LENGTH, CAMERA_INSTRINCS, DIST_COEFFICIENTS, IMG_PATH, print_flag=False, vis=False)
     T_camera_calibration = mat[0]
     
-    cmd_open = 'curl -X GET http://localhost:7278/PSTapi/StartTrackerDataStream'
-    cmd_close = 'curl --request POST --data \'\' http://localhost:7278/PSTapi/CloseDataStream'
+    cmd = 'GetTracker'
 
     while True:
-        res, err = client.exec_cmd(s, cmd_open)
+        res = client.exec_cmd(s, cmd)
         print(res)
         str = input('Finish getting tracker data? (y/n): ')
         if str == 'y':
             break
-
-    # res, err = client.exec_cmd(s, cmd_close)
-     # print(res)
 
     js = formatter_str(res)
     
