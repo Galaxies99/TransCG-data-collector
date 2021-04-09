@@ -1,5 +1,5 @@
 import pycurl
-from .utils import parse_cmd
+from .utils import parse_cmd # pylint: disable=relative-beyond-top-level
 
 def parse_curl(cmd):
     name, args, cmd_type = [], [], -1

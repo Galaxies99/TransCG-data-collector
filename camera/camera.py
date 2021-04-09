@@ -3,7 +3,7 @@ import sys
 import time
 from multiprocessing import shared_memory
 import numpy as np
-import cv2
+from cv2 import cv2
 
 class RealSenseCamera(object):
     def __init__(self, type='D435', resolution=(1280, 720)):

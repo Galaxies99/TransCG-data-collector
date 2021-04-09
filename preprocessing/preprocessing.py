@@ -26,5 +26,5 @@ for name in obj_name:
         os.system(meshlabserver_dir + ' -i rawdata/{}/{}.obj -o rawdata/temp/{}.ply -m vc vf vn fc ff fn -s trans_not2v.mlx'.format(name, name, name))
     else:
         os.system(meshlabserver_dir + ' -i rawdata/{}/{}.obj -o rawdata/temp/{}.ply -m vc vf vn fc ff fn -s trans_t2v.mlx'.format(name, name, name))
-    os.system(meshlabserver_dir + ' -i rawdata/temp/{}.ply -o ../models/{}.ply -m vc vf vn fc ff fn -s sim_mesh.mlx'.format(name, name, name))
+    os.system(meshlabserver_dir + ' -i rawdata/temp/{}.ply -o ../models/{}.ply -m vc vf vn fc ff fn -s sim_mesh.mlx'.format(name, name))
 

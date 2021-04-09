@@ -1,7 +1,7 @@
-from ur_toolbox.camera import RealSense
+from ur_toolbox.camera import RealSense # pylint: disable=import-error
 from multiprocessing import shared_memory
 import numpy as np
-import cv2
+from cv2 import cv2
 
 DEBUG = True
 

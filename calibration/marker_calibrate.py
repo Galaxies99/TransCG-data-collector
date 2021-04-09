@@ -5,9 +5,8 @@ Author: Haoshu Fang, Xiaoshan Lin
 
 import os
 import sys
-#from lib_py.base import fvr_setup
-import cv2
-from cv2 import aruco
+from cv2 import cv2
+from cv2 import aruco # pylint: disable=no-name-in-module
 import numpy as np
 from pyquaternion import Quaternion
 from scipy.spatial.transform import Rotation as R
@@ -35,7 +34,7 @@ def aruco_detector(marker_length,
     arucoParams.cornerRefinementWinSize = 5
     img = cv2.imread(img_path)
     img_gray = cv2.cvtColor(img, cv2.COLOR_BGR2GRAY)
-    corners, ids, rejectedImgPoints = aruco.detectMarkers(
+    corners, ids, _ = aruco.detectMarkers(
         img_gray, aruco_dict, parameters=arucoParams)
     if ids != None:
         rvec, tvec, _objPoints = aruco.estimatePoseSingleMarkers(
@@ -68,7 +67,6 @@ def aruco_detector(marker_length,
                 draw_img = aruco.drawAxis(draw_img, camera_matrix, dist_coeffs,
                                           r, t, 100)
             cv2.imshow("Detected markers", draw_img)
-            img_name = 'detected_image/' + img_path.strip('rgbpn/') + 'png'
             cv2.waitKey(0)
     else:
         print("Markers are not detected.\r")

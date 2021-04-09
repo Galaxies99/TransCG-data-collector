@@ -13,7 +13,7 @@ def callback(data):
 
 
 # Start server, needs to execute PST Rest Server first.
-OPEN_TRACKER_COMMAND = 'curl --header "Content-Type: application/json" --request POST --data "\{\}" http://localhost:7278/PSTapi/Start'
+OPEN_TRACKER_COMMAND = 'curl --header "Content-Type: application/json" --request POST --data "{}" http://localhost:7278/PSTapi/Start'
 os.system(OPEN_TRACKER_COMMAND)
 
 

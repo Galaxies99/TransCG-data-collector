@@ -7,7 +7,7 @@ import getopt
 import pycurl
 import threading
 import subprocess
-from .utils import parse_argv_relay
+from .utils import parse_argv_relay # pylint: disable=relative-beyond-top-level
 from multiprocessing import shared_memory
 
 header_buf_size = 4
@@ -19,7 +19,6 @@ shm = shared_memory.ShareableList(name='curl_result')
 
 
 def exec_conn(conn, addr, id):
-    global max_call, call_buf
     conn.send(struct.pack('i', id))
     print('[Log (ID: %d)] Login from' % id, addr)
     while True:
