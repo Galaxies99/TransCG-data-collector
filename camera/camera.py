@@ -24,8 +24,9 @@ class RealSenseCamera(object):
 
 if __name__ == '__main__':
     cam = RealSenseCamera()
-    colors, depths = cam.get_rgbd()
-    cv2.imshow('test', colors[:, :, ::-1])
-    cv2.waitKey(0)
+    while True:
+        colors, depths = cam.get_rgbd()
+        cv2.imshow('test', colors[:, :, ::-1])
+        cv2.waitKey(1)
     
 

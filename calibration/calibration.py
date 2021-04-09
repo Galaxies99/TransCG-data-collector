@@ -32,8 +32,17 @@ T_list = []
 
 for i in range(TIMES):
     print('********* Calibration Times {} Start *********'.format(i))
-    image, _ = img_from_cam()
-    cv2.imwrite('img.png', image)
+    
+    cmd = 'GetTracker'
+
+    while True:
+        image, _ = img_from_cam()
+        cv2.imwrite('img.png', image)
+        res = client.exec_cmd(s, cmd)
+        print(res)
+        str = input('Finish getting tracker data? (y/n): ')
+        if str == 'y':
+            break
 
     MARKER_LENGTH = 150
     CAMERA_INSTRINCS = np.load('../configs/camInstrincs.npy')
@@ -42,15 +51,6 @@ for i in range(TIMES):
 
     mat = aruco_detector(MARKER_LENGTH, CAMERA_INSTRINCS, DIST_COEFFICIENTS, IMG_PATH, print_flag=False, vis=False)
     T_camera_calibration = mat[0]
-    
-    cmd = 'GetTracker'
-
-    while True:
-        res = client.exec_cmd(s, cmd)
-        print(res)
-        str = input('Finish getting tracker data? (y/n): ')
-        if str == 'y':
-            break
 
     js = formatter_str(res)
     
