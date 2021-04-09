@@ -1,9 +1,9 @@
 import os
-import cv2
 import math
 import copy
 import argparse
 import numpy as np
+from cv2 import cv2
 import open3d as o3d
 from pynput import keyboard
 import netrelay.client as client
@@ -115,9 +115,6 @@ def main():
 	print('log:camera parameter:\n'+str(cam))
 	
 	models = []
-	models_ply = None
-	
-	image, image_depth = img_from_cam()
 
 	if models == []:
 		for obj_id in obj_id_list:
@@ -127,7 +124,7 @@ def main():
     
 	T_tracker_camera = np.load('configs/T_tracker_camera.npy')
 
-	s, id = client.start((IP, PORT))
+	s, _ = client.start((IP, PORT))
 	cmd_tracker = 'GetTracker'
 		
 	runningflag = True
@@ -135,7 +132,7 @@ def main():
 	listener.start()
 		
 	while runningflag:
-		image, image_depth = img_from_cam()
+		image, _ = img_from_cam()
 		tracker_res = client.exec_cmd(s, cmd_tracker)
 		try:
 			tracker_js = formatter_str(tracker_res)

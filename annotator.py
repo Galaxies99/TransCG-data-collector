@@ -1,9 +1,9 @@
 import os
-import cv2
 import math
 import copy
 import argparse
 import numpy as np
+from cv2 import cv2
 import open3d as o3d
 from pynput import keyboard
 from renderer import Renderer,draw_model
@@ -161,7 +161,7 @@ def main():
 	while True:
 		moving_speed = 5
 
-		image, image_depth = img_from_cam()
+		image, _ = img_from_cam()
 
 		textimage = copy.deepcopy(image)
 		textimage = cv2.putText(textimage, 'Input an intager to select ply file, 0 for exiting', (10, 30), font, font_size, font_color, font_thickness)
@@ -201,7 +201,7 @@ def main():
 		listener.start()
 		
 		while runningflag:
-			image, image_depth = img_from_cam()
+			image, _ = img_from_cam()
 			pose = get_mat(x, y, z, alpha, beta, gamma)
 			rendered_image = draw_model(image, pose, cam, models)
 			rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)

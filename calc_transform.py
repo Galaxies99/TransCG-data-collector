@@ -17,7 +17,7 @@ filename = '{}-{}'.format(ID, TIME)
 T_tracker_marker = np.load('results/{}.npy'.format(filename))
 
 rd = xmlReader('results/{}.xml'.format(filename))
-[[_, x, y, z, alpha, beta, gamma]] = rd.getposevectorlist()
+[[_, x, y, z, alpha, beta, gamma]] = rd.getposevectorlist() # pylint: disable=unbalanced-tuple-unpacking
 T_camera_object = get_mat(x, y, z, alpha, beta, gamma)
 
 T_tracker_camera = np.load('configs/T_tracker_camera.npy')
@@ -26,7 +26,7 @@ print('Caclulating the transformation matrix ...')
 try:
     T_marker_object = (np.linalg.inv(T_tracker_marker).dot(T_tracker_camera)).dot(T_camera_object)
 except Exception:
-    print(e.values)
+    print('Unexpected Error')
     exit()
 
 print('The transformation matrix is: ', T_marker_object)

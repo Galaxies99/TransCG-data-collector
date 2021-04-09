@@ -93,8 +93,6 @@ class xmlReader():
         posevectorlist = []
         for i in range(len(self.top)):
             objectid = int(self.top[i][0].text)
-            objectname = self.top[i][1].text
-            objectpath = self.top[i][2].text
             translationtext = self.top[i][3].text.split()
             translation = []
             for text in translationtext:
@@ -104,7 +102,7 @@ class xmlReader():
             for text in quattext:
                 quat.append(float(text))
             alpha, beta, gamma = quat2euler(quat)
-            x, y, z = translation
+            x, y, z = translation # pylint: disable=unbalanced-tuple-unpacking
             alpha *= (180.0 / np.pi)
             beta *= (180.0 / np.pi)
             gamma *= (180.0 / np.pi)

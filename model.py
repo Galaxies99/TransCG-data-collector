@@ -8,7 +8,7 @@ import os
 import numpy as np
 from scipy.spatial.distance import pdist
 from plyfile import PlyData
-import cv2
+from cv2 import cv2
 from vispy import gloo
 import dill
 import copy
