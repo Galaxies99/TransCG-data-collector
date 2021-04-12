@@ -2,8 +2,6 @@
 
 This project is initially developed by [Minghao Gou](https://github.com/GouMinghao) and then modified by [Tony Fang](https://github.com/Galaxies99). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
 
-[TOC]
-
 ## Preparation
 
 Install all the python requirements using the following command.

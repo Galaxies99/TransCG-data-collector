@@ -14,7 +14,8 @@ calibration/img.png
 calibration/images/
 .vscode/
 .history/
-configs/
+configs/T_camera1_camera2.npy
+configs/T_tracker_camera.npy
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
