@@ -116,12 +116,9 @@ def main():
 	
 	models = []
 
-	if models == []:
-		for obj_id in obj_id_list:
-			models.append(None)
-	else:
-		print('using cached model')
-    
+	for obj_id in obj_id_list:
+		models.append(None)
+
 	T_tracker_camera = np.load('configs/T_tracker_camera.npy')
 
 	s, _ = client.start((IP, PORT))
