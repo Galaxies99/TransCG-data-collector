@@ -11,8 +11,10 @@ preprocessing/use_t2v_list.txt
 results_old/
 data/
 calibration/img.png
+calibration/images/
 .vscode/
 .history/
+configs/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/

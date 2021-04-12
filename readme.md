@@ -58,6 +58,7 @@ Here, replace `[Camera Version]` with your RGB-D camera version. Currently, `rea
 ```bash
 cd calibration
 python calibration.py
+cd ..
 ```
 
 This calibration process uses `aruco` to perform camera calibration. Combining with the data reading from tracker, the calibration process can calculate the transformation matrix between tracker and camera, which will be stored in file `configs/T_tracker_camera.npy`.
