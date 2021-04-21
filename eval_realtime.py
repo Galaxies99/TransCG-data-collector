@@ -75,13 +75,6 @@ def on_release(key):
 	pass
 
 
-def img_from_cam():
-	image, image_depth = camera.get_rgbd()
-	image = (image * 255).astype(np.uint8)
-	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-	return image, image_depth
-
-
 def main():
 	global runningflag, transparency
 	
@@ -129,7 +122,7 @@ def main():
 	listener.start()
 		
 	while runningflag:
-		image, _ = img_from_cam()
+		image, _ = camera.get_full_image()
 		tracker_res = client.exec_cmd(s, cmd_tracker)
 		try:
 			tracker_js = formatter_str(tracker_res)

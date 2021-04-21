@@ -3,43 +3,32 @@ from multiprocessing import shared_memory
 import numpy as np
 from cv2 import cv2
 
-DEBUG = True
-
-camera = RealSense(frame_rate = 30)
-if DEBUG:
-    for i in range(10):
-        colors, depths = camera.get_rgbd_image()
-else:
-    for i in range(10):
-        depths = camera.get_depth_image()
-        
+camera = RealSense(frame_rate = 30, use_infrared=True)
+for i in range(10):
+    colors, depths, infrared_left, infrared_right = camera.get_full_image()
 
 shm_depth = shared_memory.SharedMemory(name='realsense_depth_D435', create=True, size=depths.nbytes)
 depthbuf = np.ndarray(depths.shape, dtype=depths.dtype, buffer=shm_depth.buf)
-
-if DEBUG:
-    colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
-    shm_color = shared_memory.SharedMemory(name='realsense_color_D435', create=True, size=colors.nbytes)
-    colorbuf = np.ndarray(colors.shape, dtype=colors.dtype, buffer=shm_color.buf)
+colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
+shm_color = shared_memory.SharedMemory(name='realsense_color_D435', create=True, size=colors.nbytes)
+colorbuf = np.ndarray(colors.shape, dtype=colors.dtype, buffer=shm_color.buf)
+shm_infrared_left = shared_memory.SharedMemory(name='realsense_infrared_left_D435', create=True, size=infrared_left.nbytes)
+infraredleftbuf = np.ndarray(infrared_left.shape, dtype=infrared_left.dtype, buffer=shm_infrared_left.buf)
+shm_infrared_right = shared_memory.SharedMemory(name='realsense_infrared_right_D435', create=True, size=infrared_right.nbytes)
+infraredrightbuf = np.ndarray(infrared_right.shape, dtype=infrared_right.dtype, buffer=shm_infrared_right.buf)
 
 try:
     while True:
-        colors = None
-        
-        if DEBUG:
-            print(shm_color.name)
-            print(shm_depth.name)
-            colors, depths = camera.get_rgbd_image()
-            colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
-
+        print('fetching images ...')
+        colors, depths, infrared_left, infrared_right = camera.get_full_image()
+        colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
             
-            colorbuf[:] = colors[:]
-            depthbuf[:] = depths[:]
-        else:
-            print(shm_depth.name)
-            depths = camera.get_depth_image()
-
-            depthbuf[:] = depths[:]
+        colorbuf[:] = colors[:]
+        depthbuf[:] = depths[:]
+        infraredleftbuf[:] = infrared_left[:]
+        infraredrightbuf[:] = infrared_right[:]
 except KeyboardInterrupt:
     shm_depth.unlink()
     shm_color.unlink()
+    shm_infrared_left.unlink()
+    shm_infrared_right.unlink()

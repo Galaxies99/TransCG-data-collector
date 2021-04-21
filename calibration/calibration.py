@@ -23,12 +23,6 @@ FILE_PATH = FLAGS.path
 
 camera1 = RealSenseCamera(type='D435')
 camera2 = RealSenseCamera(type='L515')
-def img_from_cam(camera):
-	image, image_depth = camera.get_rgbd()
-	image = (image * 255).astype(np.uint8)
-	image = cv2.cvtColor(image, cv2.COLOR_BGR2RGB)
-	return image, image_depth
-
 
 if os.path.exists(FILE_PATH) == False:
     os.mkdir(FILE_PATH)
@@ -44,8 +38,8 @@ for i in range(TIMES):
     cmd = 'GetTracker'
 
     while True:
-        image1, _ = img_from_cam(camera1)
-        image2, _ = img_from_cam(camera2)
+        image1, _ = camera1.get_full_image()
+        image2, _ = camera2.get_full_image()
         cv2.imwrite(os.path.join(FILE_PATH, 'img1.png'), image1)
         cv2.imwrite(os.path.join(FILE_PATH, 'img2.png'), image2)
         res = client.exec_cmd(s, cmd)

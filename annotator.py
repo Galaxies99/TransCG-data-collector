@@ -116,13 +116,6 @@ def on_release(key):
 	pass
 
 
-def img_from_cam():
-	image, image_depth = camera.get_rgbd()
-	image = (image * 255).astype(np.uint8)
-	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-	return image, image_depth
-
-
 def main():
 	global runningflag, x, y, z, alpha, beta, gamma, transparency
 	global moving_speed
@@ -161,7 +154,7 @@ def main():
 	while True:
 		moving_speed = 5
 
-		image, _ = img_from_cam()
+		image, _ = camera.get_full_image()
 
 		textimage = copy.deepcopy(image)
 		textimage = cv2.putText(textimage, 'Input an intager to select ply file, 0 for exiting', (10, 30), font, font_size, font_color, font_thickness)
@@ -201,7 +194,7 @@ def main():
 		listener.start()
 		
 		while runningflag:
-			image, _ = img_from_cam()
+			image, _ = camera.get_full_image()
 			pose = get_mat(x, y, z, alpha, beta, gamma)
 			rendered_image = draw_model(image, pose, cam, models)
 			rendered_image = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)

@@ -32,7 +32,7 @@ if os.path.exists(DATA_DIR) == False:
 IP = FLAGS.ip
 ID = FLAGS.id
 PORT = FLAGS.port
-camera1 = RealSenseCamera(type='D435')
+camera1 = RealSenseCamera(type='D435', use_infrared=True)
 camera2 = RealSenseCamera(type='L515')
 MODEL_DIR=FLAGS.model_dir
 DATA_DIR = os.path.join(DATA_DIR, 'scene{}'.format(ID))
@@ -49,13 +49,13 @@ runningflag = True
 state = 'normal'
 DOWNSAMPLE_VOXEL_SIZE_M = 0.005
 transparency = 0.5
-image, image2, image_depth, image_depth2 = None, None, None, None
+image, image2, image_depth, image_depth2, image_infrared_left, image_infrared_right = None, None, None, None, None, None
 pose = []
 
 def on_press(key):
 	global transparency, runningflag
 	global state    
-	global image, image2, image_depth, image_depth2, pose, times_id
+	global image, image2, image_depth, image_depth2, image_infrared_left, image_infrared_right, pose, times_id
 	if state == 'normal':
 		try:		
 			if key.char == '.':
@@ -79,6 +79,8 @@ def on_press(key):
 				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb2.png'), image2)
 				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1.png'), image_depth)
 				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2.png'), image_depth2)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-left.png'), image_infrared_left)
+				cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-right.png'), image_infrared_right)
 				for i, p in enumerate(pose):
 					if p is None:
 						continue
@@ -97,16 +99,10 @@ def on_release(key):
 	pass
 
 
-def img_from_cam(camera):
-	image, image_depth = camera.get_rgbd()
-	image = (image * 255).astype(np.uint8)
-	image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
-	return image, image_depth
-
 
 def main():
 	global runningflag, transparency
-	global image, image2, image_depth, image_depth2, pose
+	global image, image2, image_depth, image_depth2, image_infrared_left, image_infrared_right, pose
 	
 	font_size = 0.5
 	font_thickness = 1
@@ -145,8 +141,8 @@ def main():
 	listener.start()
 		
 	while runningflag:
-		image, image_depth = img_from_cam(camera1)
-		image2, image_depth2 = img_from_cam(camera2)
+		image, image_depth, image_infrared_left, image_infrared_right = camera1.get_full_image()
+		image2, image_depth2 = camera2.get_full_image()
 		tracker_res = client.exec_cmd(s, cmd_tracker)
 		try:
 			tracker_js = formatter_str(tracker_res)
