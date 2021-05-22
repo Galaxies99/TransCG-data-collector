@@ -32,3 +32,13 @@ class RealSenseCamera(object):
             return colors, depths, infrared_left, infrared_right
         else:
             return colors, depths
+
+
+if __name__ == '__main__':
+    cam = RealSenseCamera()
+    while True:
+        colors, depths = cam.get_full_image()
+        cv2.imshow('test', depths * 255)
+        cv2.waitKey(5)
+    
+    
