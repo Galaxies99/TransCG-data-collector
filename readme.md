@@ -1,6 +1,6 @@
 # 6dPose Annotator for Camera
 
-This project is initially developed by [Minghao Gou](https://github.com/GouMinghao) and then modified by [Tony Fang](https://github.com/Galaxies99). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
+This project is mainly written by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
 
 ## Preparation
 
@@ -24,7 +24,7 @@ python preprocessing/preprocessing.py --server [Your MeshLab Server Path]
 
 Here, replace `[Your MeshLab Server Path]` with your own MeshLab Server path, usually in `[Your Meshlab Path]/distrib/meshlabserver` once you have successfully compiled MeshLab.
 
-## Run
+## Annotation
 
 **Step 1**. Connect the PST tracker with a computer in Windows system, and run PST REST Server according to the documentation of PST tracker. Then run the following command, and keep the running program in background.
 
@@ -89,7 +89,7 @@ python eval_realtime.py --id [Object ID] --ip [IP Address] --port [Port]
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. After several seconds, you will see real-time evluation image captured by the tracker on the screen.
 
-Notice that you can also ignore the `--id [Object ID]` arguments. By doing so, the evaluate process will detect the objects automatically and load the corresponding models.
+Notice that you can also ignore the `--id [Object ID]` arguments. By doing so, the evaluation process will detect the objects automatically and load the corresponding models.
 
 ## Data Collection
 
@@ -108,7 +108,7 @@ python camera/realsense_L515.py
 
 Once you are satisfied with the picture and the models shown on the screen, you can press Enter to save one shot of this screen. You can also press `,` or `.` to increase or decrease the transparency of the objects respectively. By pressing `q`, you can finish the collection of this scene. The data will be collected in the following form.
 
-```bash
+```
 data
 ├── scene1
 |   ├── 0
@@ -116,6 +116,8 @@ data
 |   |   ├── image2.png
 |   |   ├── image_depth1.png
 |   |   ├── image_depth2.png
+|   |   ├── ir1-left.png
+|   |   ├── ir1-right.png
 |   |   └── pose
 |   |       ├── 0.npy
 |   |       ├── 23.npy
@@ -127,9 +129,10 @@ data
 ```
 
 - `image1.png` and `image_depth1.png` are the RGB image and the depth image read from Realsense D435;
+- `ir1-left.png` and `ir1-right.png` are the infrared images read from Realsense D435, notice the infrared images is unaligned. Substitute `camera.get_full_image()` with `camera.get_full_image(ir_aligned = True)` in `camera/Realsense_D435.py` to align them together.
 - `image2.png` and `image_depth2.png` are the RGB image and the depth image read from Realsense L515;
 - `pose` contains are the objects detected in `image1.png`; `[ID].npy` denotes the pose of object numbered `[ID]` in the picture.
 
 ## Maintenance
 
-Mailto: galaxies@sjtu.edu.cn
+Mailto: galaxies@sjtu.edu.cn, tony.fang.galaxies@gmail.com
