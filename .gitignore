@@ -12,6 +12,7 @@ results_old/
 data/
 calibration/img.png
 calibration/images/
+calibration/robot_images/
 .vscode/
 .history/
 configs/T_camera1_camera2.npy

@@ -3,7 +3,7 @@ import sys
 import argparse
 from cv2 import cv2
 import numpy as np
-from .marker_calibrate import aruco_detector
+from marker_calibrate import aruco_detector
 sys.path.append(os.path.dirname(sys.path[0]))
 from camera.camera import RealSenseCamera # pylint: disable=import-error
 
@@ -23,6 +23,7 @@ if os.path.exists(FILE_PATH) == False:
 print('********* Calibration Times {} Start *********'.format(ID))
 
 img, _ = camera.get_full_image()
+cv2.imwrite(os.path.join(FILE_PATH, 'img.png'), img)
 # Camera
 MARKER_LENGTH = 150
 CAMERA_INSTRINCS = np.load('../configs/camInstrincs.npy')

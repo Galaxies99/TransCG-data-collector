@@ -3,7 +3,7 @@ import sys
 import argparse
 from cv2 import cv2
 import numpy as np
-from .marker_calibrate import aruco_detector
+from marker_calibrate import aruco_detector
 sys.path.append(os.path.dirname(sys.path[0]))
 from camera.camera import RealSenseCamera # pylint: disable=import-error
 import netrelay.client as client # pylint: disable=import-error
