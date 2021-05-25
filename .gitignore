@@ -17,6 +17,7 @@ calibration/robot_images/
 .history/
 configs/T_camera1_camera2.npy
 configs/T_tracker_camera.npy
+configs/robot_calibration/
 
 # Byte-compiled / optimized / DLL files
 __pycache__/
