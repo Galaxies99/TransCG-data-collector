@@ -5,6 +5,8 @@ object_id_list.txt
 .DS_Store
 */.DS_Store
 results/
+images/
+image/
 preprocessing/rawdata/
 preprocessing/use_t2v_list.txt
 */__pycache__/
