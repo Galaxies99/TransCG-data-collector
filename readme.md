@@ -133,9 +133,23 @@ data
 - `image2.png` and `image_depth2.png` are the RGB image and the depth image read from Realsense L515;
 - `pose` contains are the objects detected in `image1.png`; `[ID].npy` denotes the pose of object numbered `[ID]` in the picture.
 
-## Data Collection By Robots
+## Advanced: Robot Calibration
 
-**Step 1**. Plan the fixed route of the robot.
+If you want to automatically collect data by robots, you can call the robot calibration scripts in every point of the robot's route by
+
+```bash
+cd calibration
+python robot_calibration.py --id [ID] --path [Path to Robot Image]
+cd ..
+```
+
+where `[ID]` is the route point's ID, and `[Path to Robot Image]` is the image path to store the calibration image (default: `robot_images`). After executing the script, the program will generate the calibration image in the image folder, while saving the calibration transformation matrix (from camera to calibration object) in `configs/robot_calibration/` folder. This calibration process uses `aruco` to perform camera calibration.
+
+Notice that, as stated before, you may also keep the camera process in background. Here we only use RealSense D435 for robot calibration. Therefore, you should execute the following script and keep it in background.
+
+```bash
+python camera/realsense_D435.py
+```
 
 ## Maintenance
 
