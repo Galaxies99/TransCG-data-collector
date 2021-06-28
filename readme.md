@@ -12,7 +12,7 @@ pip install -r requirements.txt
 
 Install [MeshLab Release 2020.06](https://github.com/cnr-isti-vclab/meshlab/releases/tag/Meshlab-2020.06) by compiling the source code.
 
-Other than the previous requirements, you also need to install `ur_toolbox` from this [repository](https://github.com/graspnet/ur_toolbox). Another library that is required is the `netrelay` from this [repository](https://github.com/galaxies99/netrelay), but you don't need to worry about that, since this repository already contains the important module of the `netrelay` library.
+Another library that is required is the `netrelay` from this [repository](https://github.com/galaxies99/netrelay), but you don't need to worry about that, since this repository already contains the important module of the `netrelay` library.
 
 ## Preprocessing
 
@@ -132,6 +132,10 @@ data
 - `ir1-left.png` and `ir1-right.png` are the infrared images read from Realsense D435, notice the infrared images is unaligned. Substitute `camera.get_full_image()` with `camera.get_full_image(ir_aligned = True)` in `camera/Realsense_D435.py` to align them together.
 - `image2.png` and `image_depth2.png` are the RGB image and the depth image read from Realsense L515;
 - `pose` contains are the objects detected in `image1.png`; `[ID].npy` denotes the pose of object numbered `[ID]` in the picture.
+
+## Data Collection By Robots
+
+**Step 1**. Plan the fixed route of the robot.
 
 ## Maintenance
 

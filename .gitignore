@@ -13,6 +13,7 @@ preprocessing/use_t2v_list.txt
 results_old/
 data/
 calibration/img.png
+calibration/robot_calibration.sh
 calibration/images/
 calibration/robot_images/
 .vscode/
