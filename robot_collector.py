@@ -3,7 +3,6 @@ import argparse
 import numpy as np
 from cv2 import cv2
 import netrelay.client as client
-from renderer import draw_model
 from camera.camera import RealSenseCamera
 from jsonhandler import formatter_str, find_obj
 from model import loadmodel
@@ -108,27 +107,26 @@ def main():
 			if models[i] is None:
 				print('log: loading model', obj_filename)
 				models[i] = loadmodel(MODEL_DIR, obj_filename)
-			rendered_image = draw_model(rendered_image, T_camera_object, cam, models[i])
 			pose[i] = T_camera_object
 		else:
 			pose[i] = None
-
-		print('log: saving data')
-		POSE_DIR = os.path.join(CUR_DATA_DIR, 'pose')
-		if os.path.exists(POSE_DIR) == False:
-			os.makedirs(POSE_DIR)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb1.png'), image)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb2.png'), image2)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1.png'), image_depth)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2.png'), image_depth2)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-left.png'), image_infrared_left)
-		cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-right.png'), image_infrared_right)
-		for i, p in enumerate(pose):
-			if p is None:
-				continue
-			else:
-				np.save(os.path.join(POSE_DIR, '{}.npy'.format(i)), p)
-		print('log: finish saving data')
+	
+	print('log: saving data')
+	POSE_DIR = os.path.join(CUR_DATA_DIR, 'pose')
+	if os.path.exists(POSE_DIR) == False:
+		os.makedirs(POSE_DIR)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb1.png'), image)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb2.png'), image2)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1.png'), image_depth)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2.png'), image_depth2)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-left.png'), image_infrared_left)
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-right.png'), image_infrared_right)
+	for i, p in enumerate(pose):
+		if p is None:
+			continue
+		else:
+			np.save(os.path.join(POSE_DIR, '{}.npy'.format(i)), p)
+	print('log: finish saving data')
 
 	client.close(s)
 
