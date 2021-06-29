@@ -11,16 +11,19 @@ from camera.camera import RealSenseCamera # pylint: disable=import-error
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default = 0, help = 'calibration id', type = int)
 parser.add_argument('--path', default = 'robot_images', help = 'path of calibration images', type = str)
+parser.add_argument('--debug', action='store_true', help = 'whether to enable the debug mode (output the logs)')
 FLAGS = parser.parse_args()
 FILE_PATH = FLAGS.path
 ID = FLAGS.id
+DEBUG = FLAGS.debug
 
 camera = RealSenseCamera(type='D435')
 
 if os.path.exists(FILE_PATH) == False:
     os.mkdir(FILE_PATH)
 
-print('********* Calibration Times {} Start *********'.format(ID))
+if DEBUG:
+    print('********* Calibration Times {} Start *********'.format(ID))
 
 img, _ = camera.get_full_image()
 cv2.imwrite(os.path.join(FILE_PATH, 'img.png'), img)
@@ -44,7 +47,7 @@ if os.path.exists('../configs/robot_calibration/') == False:
 with open(os.path.join('../configs/robot_calibration/', '{}.npy'.format(ID)), 'wb') as fT:
     np.save(fT, T_camera_pose)
 
-
-print('********* Calibration Times {} Finished *********'.format(ID))
-print('The pose matrix is ', T_camera_pose)
+if DEBUG:
+    print('********* Calibration Times {} Finished *********'.format(ID))
+    print('The pose matrix is ', T_camera_pose)
 
