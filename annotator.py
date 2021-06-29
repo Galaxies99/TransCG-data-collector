@@ -1,18 +1,15 @@
 import os
-import math
 import copy
 import argparse
 import numpy as np
 from cv2 import cv2
 import open3d as o3d
 from pynput import keyboard
-from renderer import Renderer,draw_model
+from renderer import draw_model
 from camera.camera import RealSenseCamera
-from model import Model3D, loadmodel, cachemodel
-from transforms3d.euler import quat2euler, euler2quat
-from transforms3d.quaternions import mat2quat, quat2mat
-from xmlhandler import xmlWriter, xmlReader, get_pose_vector
-from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose, pose_4x4_rotation
+from model import loadmodel
+from xmlhandler import xmlWriter, get_pose_vector
+from trans3d import get_mat, get_pose, pose_4x4_rotation
 
 
 parser = argparse.ArgumentParser()

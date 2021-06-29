@@ -1,20 +1,13 @@
 import os
-import math
-import copy
 import argparse
 import numpy as np
 from cv2 import cv2
-import open3d as o3d
 from pynput import keyboard
 import netrelay.client as client
-from renderer import Renderer,draw_model
+from renderer import draw_model
 from camera.camera import RealSenseCamera
 from jsonhandler import formatter_str, find_obj
-from model import Model3D, loadmodel, cachemodel
-from transforms3d.euler import quat2euler, euler2quat
-from transforms3d.quaternions import mat2quat, quat2mat
-from xmlhandler import xmlWriter, xmlReader, get_pose_vector
-from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose, pose_4x4_rotation
+from model import loadmodel
 
 
 parser = argparse.ArgumentParser()
@@ -28,19 +21,19 @@ FLAGS = parser.parse_args()
 
 DATA_DIR = FLAGS.data_dir
 if os.path.exists(DATA_DIR) == False:
-	os.mkdir(DATA_DIR)
-IP = FLAGS.ip
+	os.makedirs(DATA_DIR)
 ID = FLAGS.id
+IP = FLAGS.ip
 PORT = FLAGS.port
 camera1 = RealSenseCamera(type='D435', use_infrared=True)
 camera2 = RealSenseCamera(type='L515')
 MODEL_DIR=FLAGS.model_dir
 DATA_DIR = os.path.join(DATA_DIR, 'scene{}'.format(ID))
 if os.path.exists(DATA_DIR) == False:
-	os.mkdir(DATA_DIR)
+	os.makedirs(DATA_DIR)
 times_id = 0
 
-OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
+OBJECT_FILE_NAME_LIST_FILE_NAME = FLAGS.object_file_name_list
 
 # global variables
 x, y, z = 0.0, 0.0, 0.0
@@ -97,7 +90,6 @@ def on_press(key):
 
 def on_release(key):
 	pass
-
 
 
 def main():

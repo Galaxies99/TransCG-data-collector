@@ -11,7 +11,7 @@ from plyfile import PlyData
 from cv2 import cv2
 from vispy import gloo
 import dill
-import copy
+
 
 def loadmodel(modeldir,modelname):
     if os.path.exists(os.path.join(modeldir,modelname+'.cache')):

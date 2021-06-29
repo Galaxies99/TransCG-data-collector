@@ -1,13 +1,11 @@
 from xml.etree.ElementTree import Element, SubElement, tostring
 import xml.etree.ElementTree as ET
 import xml.dom.minidom
-from transforms3d.quaternions import mat2quat, quat2axangle
+from transforms3d.quaternions import mat2quat
 from transforms3d.euler import quat2euler
 import numpy as np
-from trans3d import get_mat, pos_quat_to_pose_4x4, get_pose
-from jsonhandler import find_obj
+from trans3d import get_mat, get_pose
 import os
-import json
 
 
 class xmlWriter():
