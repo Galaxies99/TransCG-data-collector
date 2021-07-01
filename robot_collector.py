@@ -5,11 +5,9 @@ from cv2 import cv2
 import netrelay.client as client
 from camera.camera import RealSenseCamera
 from jsonhandler import formatter_str, find_obj
-from model import loadmodel
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_dir', default='models', help='ply model files directory path')
 parser.add_argument('--data_dir',default='data',help='data directory')
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
 parser.add_argument('--id', default=-1, help='the scene ID')
@@ -28,7 +26,6 @@ IP = FLAGS.ip
 PORT = FLAGS.port
 camera1 = RealSenseCamera(type='D435', use_infrared=True)
 camera2 = RealSenseCamera(type='L515')
-MODEL_DIR=FLAGS.model_dir
 DATA_DIR = os.path.join(DATA_DIR, 'scene{}'.format(ID))
 CUR_DATA_DIR = os.path.join(DATA_DIR, str(TIME))
 if os.path.exists(CUR_DATA_DIR) == False:
@@ -57,15 +54,7 @@ def main():
 
 	obj_id_list = range(len(objectfilenamelist))
 	
-	models = []
 	pose = [None] * len(obj_id_list)
-
-	if models == []:
-		for obj_id in obj_id_list:
-			models.append(None)
-	else:
-		if DEBUG:
-			print('using cached model')
     
 	T_tracker_camera = np.load('configs/T_tracker_camera.npy')
 	
@@ -94,10 +83,6 @@ def main():
 	
 		if not notfound:
 			T_camera_object = (np.linalg.inv(T_tracker_camera).dot(T_tracker_marker)).dot(T_marker_object)
-			if models[i] is None:
-				if DEBUG:
-					print('log: loading model', obj_filename)
-				models[i] = loadmodel(MODEL_DIR, obj_filename)
 			pose[i] = T_camera_object
 		else:
 			pose[i] = None
