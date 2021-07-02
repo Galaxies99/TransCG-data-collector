@@ -8,7 +8,8 @@ def pose_corrector(
     id = 0,
     object_file_name_list = 'object_file_name_list.txt',
     perspective_num = 240,
-	include_top = False
+	include_top = False,
+	save_pose = False
 ):
 	OBJECT_FILE_NAME_LIST_FILE_NAME=object_file_name_list
 	object_file_name_list_file = open(OBJECT_FILE_NAME_LIST_FILE_NAME,'r')
@@ -59,5 +60,14 @@ def pose_corrector(
 				res_model_list.append(obj_id)
 				res_T.append(T_camera_object)
 
-	return res_model_list, res_T
+	assert(len(res_model_list) == len(res_T))
 
+	if save_pose:
+		corrected_pose_dir = os.path.join(data_dir, str(id), 'corrected_pose')
+		if os.path.exists(corrected_pose_dir) == False:
+			os.makedirs(corrected_pose_dir)
+		for i, obj_id in enumerate(res_model_list):
+			T_camera_object = res_T[i]
+			np.save(os.path.join(corrected_pose_dir, '{}.npy'.format(obj_id)), T_camera_object)
+
+	return res_model_list, res_T

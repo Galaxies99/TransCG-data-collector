@@ -77,8 +77,7 @@ def main():
 		models.append(None)
 
 	if FROM_CALIB:
-		res_model_list, res_T = pose_corrector(PRE_DATA_DIR, id, OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, include_top = False)
-		assert(len(res_model_list) == len(res_T))
+		res_model_list, res_T = pose_corrector(PRE_DATA_DIR, id, OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, include_top = False, save_pose = False)
 		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
 		rendered_image = image
 		for i, obj_id in enumerate(res_model_list):
