@@ -3,11 +3,9 @@ import argparse
 import numpy as np
 from cv2 import cv2
 from pynput import keyboard
-import netrelay.client as client
 from renderer import draw_model
-from camera.camera import RealSenseCamera
-from jsonhandler import formatter_str, find_obj
 from model import loadmodel
+from pose_corrector import pose_corrector
 
 
 parser = argparse.ArgumentParser()
@@ -26,8 +24,6 @@ DATA_DIR = os.path.join(PRE_DATA_DIR, str(FLAGS.id))
 FROM_CALIB = FLAGS.from_calibration
 
 # global variables
-x, y, z = 0.0, 0.0, 0.0
-alpha, beta, gamma = 0.0, 0.0, 0.0
 runningflag = True
 state = 'normal'
 DOWNSAMPLE_VOXEL_SIZE_M = 0.005
@@ -81,28 +77,16 @@ def main():
 		models.append(None)
 
 	if FROM_CALIB:
+		res_model_list, res_T = pose_corrector(PRE_DATA_DIR, id, OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, include_top = False)
+		assert(len(res_model_list) == len(res_T))
 		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
 		rendered_image = image
-		pose_dir = os.path.join(PRE_DATA_DIR, '0', 'pose')
-		T_camera_base_aruco = np.load(os.path.join('configs', 'robot_calibration', '0.npy'))
-		T_camera_aruco = np.load(os.path.join('configs', 'robot_calibration', '{}.npy'.format(id)))
-
-		for filename in os.listdir(pose_dir):
-			obj_id, ext = os.path.splitext(filename)
-			if ext != '.npy':
-				continue
-			try:
-				obj_id = int(obj_id)
-			except Exception:
-				continue
-			if obj_id < 0 or obj_id >= len(objectfilenamelist):
-				continue
+		for i, obj_id in enumerate(res_model_list):
+			T_camera_object = res_T[i]
 			obj_filename = objectfilenamelist[obj_id]
 			if models[obj_id] is None:
 				print('log: loading model', obj_filename)
 				models[obj_id] = loadmodel(MODEL_DIR, obj_filename)
-			T_camera_base_object = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id)))
-			T_camera_object = T_camera_aruco.dot(np.linalg.inv(T_camera_base_aruco)).dot(T_camera_base_object)
 			rendered_image = draw_model(rendered_image, T_camera_object, cam, models[obj_id])
 	else:
 		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
