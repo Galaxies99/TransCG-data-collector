@@ -1,4 +1,5 @@
 import os
+import argparse
 import numpy as np
 from model import loadmodel
 
@@ -71,3 +72,12 @@ def pose_corrector(
 			np.save(os.path.join(corrected_pose_dir, '{}.npy'.format(obj_id)), T_camera_object)
 
 	return res_model_list, res_T
+
+
+if __name__ == '__main__':
+	parser = argparse.ArgumentParser()
+	parser.add_argument('--data_dir', default='data',help='data for visualization')
+	parser.add_argument('--id', default = 0, help = 'the perspective ID')
+	parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
+	FLAGS = parser.parse_args()
+	_, _ = pose_corrector(FLAGS.data_dir, FLAGS.id, FLAGS.object_file_name_list, save_pose = True)

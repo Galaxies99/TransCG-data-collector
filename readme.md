@@ -96,7 +96,7 @@ Notice that you can also ignore the `--id [Object ID]` arguments. By doing so, t
 After annotating all the objects you need for constructing data, run the following script to collects the data.
 
 ```bash
-python data_collector.py --id [Scene_ID]
+python data_collector.py --id [Scene ID]
 ```
 
 This script will read photo stream from two separate cameras: Realsense D435 and Realsense L515. So make sure to run the following commands on background.
@@ -135,7 +135,7 @@ data
 
 ## Advanced: Robot Calibration
 
-If you want to automatically collect data by robots, you can call the robot calibration scripts in every point of the robot's route by
+To automatically collect data by robots, you need to first call the robot calibration script in every point of the robot's route by
 
 ```bash
 cd calibration
@@ -150,6 +150,38 @@ Notice that, as stated before, you may also keep the camera process in backgroun
 ```bash
 python camera/realsense_D435.py
 ```
+
+## Advanced: Robot Data Collection
+
+If you want to automatically collect data by robots, you can follow the annotation step 1-2, then call the data collector script in every point of the robot's route by
+
+```bash
+python robot_collector.py --id [Scene ID] --time [Times of sampling] (--ip [IP Address]) (--port [Port])
+```
+
+Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[Times of samping]` with the current times of sampling (0-based), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in annotation step 1.
+
+The data will be in the same format as introduced in data collection section.
+
+## Advanced: Object Pose Correction
+
+After automatically collecting data, you may need to correct the poses of the object due to the vision field of the tracker. We can use the robot calibration data and the collected data to perform pose correction. You may execute the following script:
+
+```bash
+python pose_corrector.py --data_dir [Data Path] --id [Scene ID]
+```
+
+The corrected pose will be in the folder named `corrected_pose` in `[Data Path]` directory.
+
+## Advanced: Visualization
+
+You may perform visualization to check whether the collected data is satisfactory by
+
+```bash
+python visualization.py --data_dir [Data Path] --id [Scene ID] (--corrected)
+```
+
+where setting `--corrected` means using the corrected poses, otherwise the default poses detected by the tracker will be used.
 
 ## Maintenance
 
