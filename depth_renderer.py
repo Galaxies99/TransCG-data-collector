@@ -4,7 +4,6 @@ import numpy as np
 import copy
 import trimesh
 import pyrender
-from model import loadmodel
 
 
 class SceneRenderer(object):
@@ -33,15 +32,15 @@ class SceneRenderer(object):
             raise ValueError('model id out of range.')
         obj_filename = self.obj_filename_list[model_id]
         if self.models[model_id] is None:
-            self.models[model_id] = loadmodel(self.model_dir, obj_filename)
+            self.models[model_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(self.model_dir, obj_filename)))
         return self.models[model_id]
 
-    def render_image(self, image_path, use_corrected_pose = False):
+    def render_image(self, image_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
         '''
         Render a single image.
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
-        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED))
+        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED)) / scale_factor
         cam = pyrender.IntrinsicsCamera(927.17, 927.37, 651.32, 349.62)
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
@@ -66,15 +65,14 @@ class SceneRenderer(object):
             obj_pose = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id))) 
             node = pyrender.Node(mesh = copy.deepcopy(self.get_models(obj_id)), matrix = obj_pose)
             nodes.append(node)
-            scene.add(nodes)
+            scene.add_node(node)
         
-        width, height = original_depth.shape
+        height, width = original_depth.shape
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
+        full_depth = np.where(full_depth <= epsilon, np.inf, full_depth)
+        return np.minimum(full_depth, original_depth)
 
-        return full_depth
-
-        
 
 
 if __name__ == '__main__':
