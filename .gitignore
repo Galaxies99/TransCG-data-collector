@@ -11,7 +11,7 @@ preprocessing/rawdata/
 preprocessing/use_t2v_list.txt
 */__pycache__/
 results_old/
-data/
+data
 calibration/img.png
 calibration/robot_calibration.sh
 calibration/images/
