@@ -79,7 +79,7 @@ class SceneRenderer(object):
 
 if __name__ == '__main__':
     renderer = SceneRenderer()
-    depth = renderer.render_image('data/0')
+    depth = renderer.render_image('data/scene1/0/')
     depth = depth / depth.max()
     cv2.imshow('depth', depth)
     cv2.waitKey(0)
