@@ -35,12 +35,12 @@ class SceneRenderer(object):
             self.models[model_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(self.model_dir, obj_filename)))
         return self.models[model_id]
 
-    def render_image(self, image_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
+    def render_image(self, image_path, use_corrected_pose = False, save_result = True, epsilon = 1e-6, scale_factor = 1000):
         '''
         Render a single image.
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
-        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED)) / scale_factor
+        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED))
         cam = pyrender.IntrinsicsCamera(927.17, 927.37, 651.32, 349.62)
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
@@ -70,13 +70,23 @@ class SceneRenderer(object):
         height, width = original_depth.shape
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
-        full_depth = np.where(full_depth <= epsilon, np.inf, full_depth)
-        return np.minimum(full_depth, original_depth)
-
+        full_depth = np.where(full_depth <= epsilon, np.inf, full_depth * scale_factor)
+        depth = np.minimum(full_depth, original_depth)
+        if save_result:
+            cv2.imwrite(os.path.join(image_path, "depth-gt.png"), depth)
+        return depth
+    
+    def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
+        '''
+        Render a scene, which contains several images.
+        '''
+        for image_folder in os.listdir(scene_path):
+            self.render_image(os.path.join(scene_path, image_folder), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
 
 
 if __name__ == '__main__':
     renderer = SceneRenderer()
-    depth = renderer.render_image('data/scene1/0/')
-    cv2.imshow('depth', depth)
+    data_path = 'data'
+    depth = renderer.render_image('data/0/')
+    cv2.imshow('depth', depth / 1000)
     cv2.waitKey(0)
