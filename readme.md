@@ -193,7 +193,7 @@ python depth_renderer.py --image_path [Image Path] (--corrected)
 
 where setting `--corrected` means using the corrected poses (to do so, you need to first perform the object pose correction mentioned before), and the `[Image Path]` is the path to the image (a perspective of a scene).
 
-## Advanced: PostProcessing
+## Advanced: Postprocessing
 
 You may perform pose correction & ground truth depth rendering automatically by executing the postprocessing script.
 
