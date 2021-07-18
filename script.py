@@ -5,11 +5,11 @@ import netrelay.client as client
 from jsonhandler import formatter_str, find_obj
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--id', default=0, help='Object ID', type=int)
-parser.add_argument('--time', default=0, help='Times of sampling', type=int)
-parser.add_argument('--ip', default='10.52.25.177', help='IP address of the computer with Windows system', type=str)
-parser.add_argument('--port', default=23333, help='The port that are used in netrelay', type=int)
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
+parser.add_argument('--id', default = 0, help = 'Object ID', type = int)
+parser.add_argument('--time', default = 0, help = 'Times of sampling', type = int)
+parser.add_argument('--ip', default = '10.52.25.177', help = 'IP address of the computer with Windows system', type = str)
+parser.add_argument('--port', default = 23333, help = 'The port that are used in netrelay', type = int)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
 FLAGS = parser.parse_args()
 ID = FLAGS.id
 TIME = FLAGS.time

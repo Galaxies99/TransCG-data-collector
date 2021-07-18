@@ -13,13 +13,13 @@ from trans3d import get_mat, get_pose, pose_4x4_rotation
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_dir', default='models', help='ply model files directory path')
-parser.add_argument('--save_xml',default='True',help='True for saving xml, False for not saving xml, when checking the result, this arg should be set as False')
-parser.add_argument('--xml_dir',default='results',help='output xml file directory')
-parser.add_argument('--camera',default='realsense_D435',help='realsense_D435 or realsense_L515')
-parser.add_argument('--id', default=0, help='The object ID', type=int)
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--time',default=0,help='time', type=int)
+parser.add_argument('--model_dir', default = 'models', help='ply model files directory path', type = str)
+parser.add_argument('--save_xml', default = 'True', help = 'True for saving xml, False for not saving xml, when checking the result, this arg should be set as False', type = str)
+parser.add_argument('--xml_dir', default = 'results', help = 'output xml file directory', type = str)
+parser.add_argument('--camera', default = 'realsense_D435', help = 'realsense_D435 or realsense_L515', type = str)
+parser.add_argument('--id', default = 0, help = 'The object ID', type = int)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
+parser.add_argument('--time', default = 0, help = 'time', type = int)
 FLAGS = parser.parse_args()
 
 if FLAGS.save_xml == 'True':

@@ -4,8 +4,8 @@ from trans3d import get_mat
 from xmlhandler import xmlReader
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--id', default=0, help='Object ID', type=int)
-parser.add_argument('--time', default=0, help='Times of sampling', type=int)
+parser.add_argument('--id', default = 0, help = 'Object ID', type = int)
+parser.add_argument('--time', default = 0, help = 'Times of sampling', type = int)
 FLAGS = parser.parse_args()
 ID = FLAGS.id
 TIME = FLAGS.time

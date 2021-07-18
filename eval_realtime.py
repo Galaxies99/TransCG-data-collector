@@ -11,13 +11,13 @@ from model import loadmodel
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_dir', default='models', help='ply model files directory path')
-parser.add_argument('--res_dir',default='results',help='output file directory')
-parser.add_argument('--camera',default='realsense_D435',help='realsense_D435 or realsense_L515')
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--id', default=-1, help='The object ID, -1 for all objects', type=int)
-parser.add_argument('--ip', default='10.52.25.177', help='IP address of the computer with Windows system', type=str)
-parser.add_argument('--port', default=23333, help='The port that are used in netrelay', type=int)
+parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)
+parser.add_argument('--res_dir', default = 'results', help = 'output file directory', type = str)
+parser.add_argument('--camera', default = 'realsense_D435', help = 'realsense_D435 or realsense_L515', type = str)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
+parser.add_argument('--id', default = -1, help = 'The object ID, -1 for all objects', type = int)
+parser.add_argument('--ip', default = '10.52.25.177', help = 'IP address of the computer with Windows system', type = str)
+parser.add_argument('--port', default = 23333, help = 'The port that are used in netrelay', type = int)
 FLAGS = parser.parse_args()
 
 RES_DIR = FLAGS.res_dir

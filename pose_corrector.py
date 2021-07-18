@@ -83,9 +83,9 @@ class PoseCorrector(object):
 
 if __name__ == '__main__':
 	parser = argparse.ArgumentParser()
-	parser.add_argument('--data_dir', default='data',help='data for visualization')
-	parser.add_argument('--id', default = 0, help = 'the perspective ID')
-	parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
+	parser.add_argument('--data_dir', default = 'data', help = 'data for visualization', type = str)
+	parser.add_argument('--id', default = 0, help = 'the perspective ID', type = int)
+	parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
 	FLAGS = parser.parse_args()
 	corrector = PoseCorrector(object_file_name_list = FLAGS.object_file_name_list, perspective_num = 240)
-	_, _ = corrector.correct_pose(FLAGS.data_dir, FLAGS.id, save_pose = True)
+	_, _ = corrector.correct_pose(FLAGS.data_dir, int(FLAGS.id), save_pose = True)

@@ -11,12 +11,12 @@ from model import loadmodel
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--model_dir', default='models', help='ply model files directory path')
-parser.add_argument('--data_dir',default='data',help='data directory')
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--id', default=-1, help='the scene ID')
-parser.add_argument('--ip', default='10.52.25.177', help='IP address of the computer with Windows system', type=str)
-parser.add_argument('--port', default=23333, help='The port that are used in netrelay', type=int)
+parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)
+parser.add_argument('--data_dir', default = 'data', help = 'data directory', type = str)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
+parser.add_argument('--id', default = -1, help = 'the scene ID', type = int)
+parser.add_argument('--ip', default = '10.52.25.177', help = 'IP address of the computer with Windows system', type = str)
+parser.add_argument('--port', default = 23333, help = 'The port that are used in netrelay', type = int)
 FLAGS = parser.parse_args()
 
 DATA_DIR = FLAGS.data_dir

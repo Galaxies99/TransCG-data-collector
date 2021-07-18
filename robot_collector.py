@@ -8,13 +8,13 @@ from jsonhandler import formatter_str, find_obj
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir',default='data',help='data directory')
-parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
-parser.add_argument('--id', default=-1, help='the scene ID')
-parser.add_argument('--time', default=0, help='the perspective ID')
-parser.add_argument('--ip', default='10.52.25.177', help='IP address of the computer with Windows system', type=str)
-parser.add_argument('--port', default=23333, help='The port that are used in netrelay', type=int)
-parser.add_argument('--debug', action='store_true', help = 'whether to enable the debug mode (output the logs)')
+parser.add_argument('--data_dir', default = 'data', help = 'data directory', type = str)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
+parser.add_argument('--id', default = -1, help = 'the scene ID', type = int)
+parser.add_argument('--time', default = 0, help = 'the perspective ID', type = int)
+parser.add_argument('--ip', default = '10.52.25.177', help = 'IP address of the computer with Windows system', type = str)
+parser.add_argument('--port', default = 23333, help = 'The port that are used in netrelay', type = int)
+parser.add_argument('--debug', action = 'store_true', help = 'whether to enable the debug mode (output the logs)')
 FLAGS = parser.parse_args()
 
 DATA_DIR = FLAGS.data_dir
