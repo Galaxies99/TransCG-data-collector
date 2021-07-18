@@ -78,7 +78,7 @@ class PoseCorrector(object):
 	
 	def correct_scene_pose(self, data_dir, include_top = False):
 		for id in range(self.perspective_num):
-			self.correcet_pose(data_dir, id, include_top = include_top, save_pose = True)
+			self.correct_pose(data_dir, id, include_top = include_top, save_pose = True)
 
 
 if __name__ == '__main__':
