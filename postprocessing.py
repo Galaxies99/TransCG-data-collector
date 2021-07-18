@@ -6,11 +6,11 @@ from depth_renderer import SceneRenderer
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default = 'data', help = 'data for postprocessing', help = str)
-parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', help = str)
+parser.add_argument('--data_dir', default = 'data', help = 'data for postprocessing', type = str)
+parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)
 parser.add_argument('--begin_id', default = 1, help = 'begin scene id', type = int)
 parser.add_argument('--end_id', default = 100, help = 'end scene id', type = int)
-parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', help = str)
+parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
 FLAGS = parser.parse_args()
 begin_id = int(FLAGS.begin_id)
 end_id = int(FLAGS.end_id)
