@@ -5,7 +5,7 @@ from cv2 import cv2
 from pynput import keyboard
 from renderer import draw_model
 from model import loadmodel
-from pose_corrector import pose_corrector
+from pose_corrector import PoseCorrector
 
 
 parser = argparse.ArgumentParser()
@@ -77,7 +77,8 @@ def main():
 		models.append(None)
 
 	if CORRECTED:
-		res_model_list, res_T = pose_corrector(PRE_DATA_DIR, id, OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, include_top = False, save_pose = False)
+		corrector = PoseCorrector(object_file_name_list = OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240)
+		res_model_list, res_T = corrector.correct_pose(PRE_DATA_DIR, id, include_top = False, save_pose = False)
 		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
 		rendered_image = image
 		for i, obj_id in enumerate(res_model_list):
