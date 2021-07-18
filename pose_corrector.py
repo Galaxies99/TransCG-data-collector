@@ -1,7 +1,6 @@
 import os
 import argparse
 import numpy as np
-from model import loadmodel
 
 
 class PoseCorrector(object):
