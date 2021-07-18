@@ -11,14 +11,14 @@ from pose_corrector import PoseCorrector
 parser = argparse.ArgumentParser()
 parser.add_argument('--model_dir', default='models', help='ply model files directory path')
 parser.add_argument('--data_dir', default='data',help='data for visualization')
-parser.add_argument('--id', default = 0, help = 'the perspective ID')
+parser.add_argument('--id', default = 0, help = 'the perspective ID', type=int)
 parser.add_argument('--object_file_name_list',default='object_file_name_list.txt',help='ascii text file name that specifies the filenames of all possible objects')
 parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
 FLAGS = parser.parse_args()
 
 MODEL_DIR=FLAGS.model_dir
 OBJECT_FILE_NAME_LIST_FILE_NAME=FLAGS.object_file_name_list
-id = FLAGS.id
+id = int(FLAGS.id)
 PRE_DATA_DIR = FLAGS.data_dir
 DATA_DIR = os.path.join(PRE_DATA_DIR, str(FLAGS.id))
 CORRECTED = FLAGS.corrected
