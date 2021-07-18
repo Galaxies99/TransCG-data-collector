@@ -6,7 +6,7 @@ from depth_renderer import SceneRenderer
 
 
 parser = argparse.ArgumentParser()
-parser.add_argument('--data_dir', default = 'data',help = 'data for visualization', help = str)
+parser.add_argument('--data_dir', default = 'data', help = 'data for postprocessing', help = str)
 parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', help = str)
 parser.add_argument('--begin_id', default = 1, help = 'begin scene id', type = int)
 parser.add_argument('--end_id', default = 100, help = 'end scene id', type = int)

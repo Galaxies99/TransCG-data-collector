@@ -183,6 +183,26 @@ python visualization.py --data_dir [Data Path] --id [Scene ID] (--corrected)
 
 where setting `--corrected` means using the corrected poses, otherwise the default poses detected by the tracker will be used.
 
+## Advanced: Ground Truth Depth Rendering
+
+You may render the ground-truth depth by executing the following commands
+
+```bash
+python depth_renderer.py --image_path [Image Path] (--corrected)
+```
+
+where setting `--corrected` means using the corrected poses (to do so, you need to first perform the object pose correction mentioned before), and the `[Image Path]` is the path to the image (a perspective of a scene).
+
+## Advanced: PostProcessing
+
+You may perform pose correction & ground truth depth rendering automatically by executing the postprocessing script.
+
+```bash
+python postprocessing.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+```
+
+where `[Data Path]` is the path to save the collected data, `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
+
 ## Maintenance
 
 Mailto: galaxies@sjtu.edu.cn, tony.fang.galaxies@gmail.com

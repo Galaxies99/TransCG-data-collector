@@ -3,6 +3,7 @@ import cv2
 import numpy as np
 import copy
 import trimesh
+import argparse
 import pyrender
 
 
@@ -85,8 +86,12 @@ class SceneRenderer(object):
 
 
 if __name__ == '__main__':
-    renderer = SceneRenderer()
-    data_path = 'data'
-    depth = renderer.render_image('data/0/')
-    cv2.imshow('depth', depth / 1000)
+    parser = argparse.ArgumentParser()
+    parser.add_argument('--image_path', default = 'data/scene1/0/', help = 'data for rendering (should be a perspective of a scene)', help = str)
+    parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', help = str)
+    parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', help = str)
+    parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
+    FLAGS = parser.parse_args()
+    renderer = SceneRenderer(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir)
+    renderer.render_image(image_path = FLAGS.image_path, use_corrected_pose = FLAGS.corrected, save_result = True)
     cv2.waitKey(0)
