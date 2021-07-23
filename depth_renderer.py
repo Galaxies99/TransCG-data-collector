@@ -74,7 +74,7 @@ class SceneRenderer(object):
         full_depth = np.where(full_depth <= epsilon, np.inf, full_depth * scale_factor)
         depth = np.minimum(full_depth, original_depth)
         if save_result:
-            cv2.imwrite(os.path.join(image_path, "depth-gt.png"), depth)
+            cv2.imwrite(os.path.join(image_path, "depth1-gt.png"), depth)
         return depth
     
     def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
