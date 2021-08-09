@@ -14,6 +14,7 @@ parser.add_argument('--data_dir', default = 'data', help = 'data for visualizati
 parser.add_argument('--id', default = 0, help = 'the perspective ID', type = int)
 parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
 parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
+parser.add_argument('--corrected_weight_path', default = None, help = 'the path to the corrected weight, by default the matrix is set to a single-valued matrix.')
 FLAGS = parser.parse_args()
 
 MODEL_DIR=FLAGS.model_dir
@@ -22,6 +23,7 @@ id = int(FLAGS.id)
 PRE_DATA_DIR = FLAGS.data_dir
 DATA_DIR = os.path.join(PRE_DATA_DIR, str(FLAGS.id))
 CORRECTED = FLAGS.corrected
+CORRECTED_WEIGHT_PATH = FLAGS.corrected_weight_path
 
 # global variables
 runningflag = True
@@ -77,7 +79,7 @@ def main():
 		models.append(None)
 
 	if CORRECTED:
-		corrector = PoseCorrector(object_file_name_list = OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240)
+		corrector = PoseCorrector(object_file_name_list = OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, perspective_pair_weight_path = CORRECTED_WEIGHT_PATH)
 		res_model_list, res_T = corrector.correct_pose(PRE_DATA_DIR, id, include_top = False, save_pose = False)
 		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
 		rendered_image = image
