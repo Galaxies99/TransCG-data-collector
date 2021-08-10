@@ -57,18 +57,19 @@ class PoseCorrector(object):
 				T_camera_object = np.load(os.path.join(standard_pose_dir, '{}.npy'.format(obj_id)))
 				res_T.append(T_camera_object)
 		else:
-			start_id = (0 if include_top else 1)
 			for obj_id in standard_model_list:
 				T_camera_object = []
-				for i in range(start_id, self.perspective_num):
+				weights = []
+				for i in range(0 if include_top else 1, self.perspective_num):
 					base_pose_dir = os.path.join(data_dir, str(i), 'pose')
 					if '{}.npy'.format(obj_id) not in os.listdir(base_pose_dir):
 						continue
 					T_camera_base_aruco = self.get_camera_aruco(i)
 					T_camera_base_object = np.load(os.path.join(base_pose_dir, '{}.npy'.format(obj_id)))
 					T_camera_object.append(T_camera_aruco.dot(np.linalg.inv(T_camera_base_aruco)).dot(T_camera_base_object))
+					weights.append(self.perspective_pair_weight[id, i])
 				if T_camera_object != []:
-					T_camera_object = np.average(np.stack(T_camera_object), axis = 0, weights = self.perspective_pair_weight[id, start_id:])
+					T_camera_object = np.average(np.stack(T_camera_object), axis = 0, weights = np.stack(weights))
 					res_model_list.append(obj_id)
 					res_T.append(T_camera_object)
 
