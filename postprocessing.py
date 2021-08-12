@@ -5,6 +5,7 @@ from pose_corrector import PoseCorrector
 from depth_renderer import SceneRenderer
 
 
+os.environ['PYOPENGL_PLATFORM'] = 'egl'
 parser = argparse.ArgumentParser()
 parser.add_argument('--data_dir', default = 'data', help = 'data for postprocessing', type = str)
 parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)

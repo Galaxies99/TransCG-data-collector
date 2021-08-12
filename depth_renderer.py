@@ -7,6 +7,9 @@ import argparse
 import pyrender
 
 
+os.environ['PYOPENGL_PLATFORM'] = 'egl'
+
+
 class SceneRenderer(object):
     '''
     Render the depth image of the scene.
