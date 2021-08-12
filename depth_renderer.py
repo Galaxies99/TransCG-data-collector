@@ -74,10 +74,10 @@ class SceneRenderer(object):
         height, width = original_depth.shape
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
-        full_depth = np.where(full_depth <= epsilon, scale_factor, full_depth * scale_factor)
-        original_depth = np.where(original_depth <= epsilon * scale_factor, scale_factor, original_depth)
-        depth = np.minimum(full_depth, original_depth).astype(original_depth.dtype)
-        depth = np.where(depth >= scale_factor - epsilon * scale_factor, 0, depth)
+        full_depth = np.where(full_depth <= epsilon, 65535, full_depth * scale_factor)
+        original_depth = np.where(original_depth <= epsilon * scale_factor, 65535, original_depth)
+        depth = np.minimum(full_depth, original_depth).astype(np.uint16)
+        depth = np.where(depth >= 65535 - epsilon * scale_factor, 0, depth)
         if save_result:
             cv2.imwrite(os.path.join(image_path, "depth1-gt.png"), depth)
         return depth
