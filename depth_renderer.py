@@ -18,6 +18,7 @@ class SceneRenderer(object):
         super(SceneRenderer, self).__init__()
         object_file_name_list = kwargs.get('object_file_name_list', 'object_file_name_list.txt')
         self.model_dir = kwargs.get('model_dir', 'models')
+        self.perspective_num = kwargs.get('perspective_num', 240)
         with open(object_file_name_list, 'r') as object_filename_file:
             self.obj_filename_list = []
             for line in object_filename_file.readlines():
@@ -86,8 +87,8 @@ class SceneRenderer(object):
         '''
         Render a scene, which contains several images.
         '''
-        for image_folder in os.listdir(scene_path):
-            self.render_image(os.path.join(scene_path, image_folder), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
+        for image_id in range(self.perspective_num):
+            self.render_image(os.path.join(scene_path, str(image_id)), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
 
 
 if __name__ == '__main__':
