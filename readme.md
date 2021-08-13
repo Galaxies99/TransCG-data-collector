@@ -1,4 +1,4 @@
-# 6dPose Annotator for Camera
+# Depth Filler Data Collector
 
 This project is mainly written by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
 
@@ -168,20 +168,20 @@ The data will be in the same format as introduced in data collection section.
 After automatically collecting data, you may need to correct the poses of the object due to the vision field of the tracker. We can use the robot calibration data and the collected data to perform pose correction. You may execute the following script:
 
 ```bash
-python pose_corrector.py --data_dir [Data Path] --id [Scene ID]
+python pose_corrector.py --data_dir [Data Path] --id [Scene ID] --perspective_num [Perspective Number] (--weight_path [Weight Path])
 ```
 
-The corrected pose will be in the folder named `corrected_pose` in `[Data Path]` directory.
+The corrected pose will be in the folder named `corrected_pose` in `[Data Path]` directory; `weight_path` is used for pose correction, default to None.
 
 ## Advanced: Visualization
 
 You may perform visualization to check whether the collected data is satisfactory by
 
 ```bash
-python visualization.py --data_dir [Data Path] --id [Scene ID] (--corrected)
+python visualization.py --data_dir [Data Path] --id [Scene ID] (--corrected) (--weight_path [Weight Path])
 ```
 
-where setting `--corrected` means using the corrected poses, otherwise the default poses detected by the tracker will be used.
+where setting `--corrected` means using the corrected poses, otherwise the default poses detected by the tracker will be used; `weight_path` is used for pose correction, default to None.
 
 ## Advanced: Ground Truth Depth Rendering
 
@@ -198,10 +198,10 @@ where setting `--corrected` means using the corrected poses (to do so, you need 
 You may perform pose correction & ground truth depth rendering automatically by executing the postprocessing script.
 
 ```bash
-python postprocessing.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+python postprocessing.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID] --perspective_num [Perspective Number] (--corrected) (--weight_path [Weight Path])
 ```
 
-where `[Data Path]` is the path to save the collected data, `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
+where setting `--corrected` means using the corrected poses, otherwise the default poses detected by the tracker will be used; `[Data Path]` is the path to save the collected data, `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing; `weight_path` is used for pose correction, default to None.
 
 ## Maintenance
 
