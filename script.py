@@ -27,6 +27,7 @@ with open(OBJECT_FILE_NAME_LIST_FILE_NAME, 'r') as f:
 
 filename = '{}-{}'.format(ID, TIME)
 obj_name, _ = os.path.splitext(objectfilenamelist[ID])
+print(obj_name)
 
 s, id = client.start((IP, PORT))
 cmd_tracker = 'GetTracker'

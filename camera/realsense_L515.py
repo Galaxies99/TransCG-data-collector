@@ -16,7 +16,7 @@ colorbuf = np.ndarray(colors.shape, dtype=colors.dtype, buffer=shm_color.buf)
 
 try:
     while True:
-        print('fetching images ...')
+        print('fetching images L515 ...')
         colors, depths = camera.get_full_image()
         colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
 

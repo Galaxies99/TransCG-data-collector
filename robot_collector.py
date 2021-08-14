@@ -95,7 +95,11 @@ def main():
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb1.png'), image)
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'rgb2.png'), image2)
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1.png'), image_depth)
+	image_depth_ = image_depth / 1000 * 255
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth1-view.png'), image_depth_)
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2.png'), image_depth2)
+	image_depth2_ = image_depth2 / 3000 * 255
+	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'depth2-view.png'), image_depth2_)
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-left.png'), image_infrared_left)
 	cv2.imwrite(os.path.join(CUR_DATA_DIR, 'ir1-right.png'), image_infrared_right)
 	for i, p in enumerate(pose):

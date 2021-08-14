@@ -19,7 +19,7 @@ infraredrightbuf = np.ndarray(infrared_right.shape, dtype=infrared_right.dtype, 
 
 try:
     while True:
-        print('fetching images ...')
+        print('fetching images D435 ...')
         colors, depths, infrared_left, infrared_right = camera.get_full_image()
         colors = (cv2.cvtColor(colors, cv2.COLOR_BGR2RGB) / 255.0).astype(np.float32)
             

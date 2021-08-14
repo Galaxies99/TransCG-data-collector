@@ -1,19 +1,19 @@
 import os
 import sys
 import time
-from multiprocessing import shared_memory
+from ur_toolbox.camera import RealSense # pylint: disable=import-error
+# from multiprocessing import shared_memory
 import numpy as np
 from cv2 import cv2
 
+
 class RealSenseCamera(object):
-    def __init__(self, type='D435', resolution=(1280, 720), use_infrared = False):
-        self.resolution = resolution
-        self.existing_shm_color = shared_memory.SharedMemory(name='realsense_color_{}'.format(type))
-        self.existing_shm_depth = shared_memory.SharedMemory(name='realsense_depth_{}'.format(type))
-        self.use_infrared = use_infrared
-        if use_infrared:
-            self.existing_shm_infrared_left = shared_memory.SharedMemory(name='realsense_infrared_left_{}'.format(type))
-            self.existing_shm_infrared_right = shared_memory.SharedMemory(name='realsense_infrared_right_{}'.format(type))
+    def __init__(self, type='D435', use_infrared=False):
+        self.type = type
+        if type == 'D435':
+            self.camera = RealSense(frame_rate = 30, use_infrared = use_infrared)
+        if type == 'L515':
+            self.camera = RealSense(frame_rate = 30, resolution = (1280, 720), resolution_depth = (1024, 768))
     
     def get_full_image(self):
         '''
@@ -21,24 +21,18 @@ class RealSenseCamera(object):
             Get the 720x1280x3 RGB image together with a 720x1280 depth image from the realsense camera.
             If 'use_infrared' is True, then return infrared images together.
         '''
-        time.sleep(0.1)
-        colors = np.copy(np.ndarray((self.resolution[1], self.resolution[0], 3), dtype=np.float32, buffer=self.existing_shm_color.buf))
-        depths = np.copy(np.ndarray((self.resolution[1], self.resolution[0]), dtype=np.uint16, buffer=self.existing_shm_depth.buf))
-        colors = (colors * 255).astype(np.uint8)
-        colors = cv2.cvtColor(colors, cv2.COLOR_RGB2BGR)
-        if self.use_infrared:
-            infrared_left = np.copy(np.ndarray((self.resolution[1], self.resolution[0]), dtype=np.uint8, buffer=self.existing_shm_infrared_left.buf))
-            infrared_right = np.copy(np.ndarray((self.resolution[1], self.resolution[0]), dtype=np.uint8, buffer=self.existing_shm_infrared_right.buf))
-            return colors, depths, infrared_left, infrared_right
-        else:
-            return colors, depths
+        try:
+            res = self.camera.get_full_image()
+        except RuntimeError:
+            res = self.camera.get_full_image()
+        return res
 
 
 if __name__ == '__main__':
     cam = RealSenseCamera()
     while True:
         colors, depths = cam.get_full_image()
-        cv2.imshow('test', depths * 255)
-        cv2.waitKey(5)
+        cv2.imshow('test', depths / 1000 * 255)
+        cv2.waitKey(1)
     
     
