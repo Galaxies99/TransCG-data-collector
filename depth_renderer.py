@@ -46,7 +46,7 @@ class SceneRenderer(object):
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
         original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED))
-        cam = pyrender.IntrinsicsCamera(927.17, 927.37, 651.32, 349.62)
+        cam = pyrender.IntrinsicsCamera(646.373, 646.373, 640.303, 362.029)
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
         scene.add(cam, pose = flip)
@@ -128,8 +128,8 @@ class SceneRenderer_L515(object):
         Render a single image.
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
-        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth2.png'), cv2.IMREAD_UNCHANGED))
-        cam = pyrender.IntrinsicsCamera(927.17, 927.37, 651.32, 349.62)
+        original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth2.png'), cv2.IMREAD_UNCHANGED)) 
+        cam = pyrender.IntrinsicsCamera(737.039, 541.719, 736.039, 390.848)
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
         scene.add(cam, pose = flip)

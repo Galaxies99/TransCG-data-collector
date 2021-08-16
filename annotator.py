@@ -134,12 +134,7 @@ def main():
 	objectidlist=[OBJ_ID]
     
 	print('log:loading camera parameters')
-	if 'realsense' in FLAGS.camera:
-		cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
-	elif 'kinect' in FLAGS.camera:
-		cam = np.array([631.54864502,0.0,638.43517329,0.,631.20751953,366.49904066,0.0,0.0,1.0]).reshape((3, 3))
-	else:
-		raise ValueError('Wrong type of camera')
+	cam = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
 	print('log:camera parameter:\n'+str(cam))
 	
 	# object pose vector format

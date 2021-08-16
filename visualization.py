@@ -70,7 +70,7 @@ def main():
 		if not (line == '\n'):
 			objectfilenamelist.append(line.replace('\n','').replace('\r',''))	
 	
-	cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
+	cam = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
 
 	obj_id_list = range(len(objectfilenamelist))
 

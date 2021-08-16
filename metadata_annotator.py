@@ -115,9 +115,9 @@ class MetadataAnnotator(object):
         image = cv2.imread(os.path.join(self.scene_path, str(perspective_id), 'rgb{}.png'.format(image_id)))
         rendered_image = image
         if image_id == 1:
-            cam = np.array([927.17, 0.0, 651.32, 0.0, 927.37, 349.62, 0.0, 0.0, 1.0]).reshape((3, 3))
+            cam = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
         else:
-            cam = np.array([737.039, 0.0, 541.719, 0.0, 736.039, 390.848, 0.0, 0.0, 1.0]).reshape((3, 3))
+            cam = np.load(os.path.join('configs', 'camIntrinsics-L515.npy'))
         for obj_id in self.scene_model_list:
             pose_file = os.path.join(self.scene_path, str(perspective_id), self.pose_dir, '{}.npy'.format(obj_id))
             if os.path.exists(pose_file):
