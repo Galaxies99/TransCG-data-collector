@@ -39,7 +39,7 @@ for i in range(TIMES):
     T_camera1_calibration = mat[0]
 
     MARKER_LENGTH = 150
-    CAMERA_INSTRINCS = np.load('../configs/camInstrincs.npy')
+    CAMERA_INSTRINCS = np.load('../configs/camInstrincs-L515.npy')
     DIST_COEFFICIENTS = np.array([0., 0., 0., 0.]).reshape(4, 1)
     IMG_PATH = os.path.join(FILE_PATH, 'img2.png')
     
