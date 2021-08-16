@@ -78,7 +78,7 @@ for i in range(TIMES):
     T_camera1_camera2 = T_camera1_calibration.dot(np.linalg.inv(T_camera2_calibration))
     print('********* Calibration Times {} Finished *********'.format(i))
     print('The transformation matrix from camera1 to camera2 is: ', T_camera1_camera2)
-    T_camera1_camera2_list.append(T_tracker_camera1)
+    T_camera1_camera2_list.append(T_camera1_camera2)
     
     IMG_STORE_PATH = os.path.join(FILE_PATH, str(i))
     if os.path.exists(IMG_STORE_PATH) == False:

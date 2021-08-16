@@ -10,7 +10,9 @@ import json
 import argparse
 import numpy as np
 from pynput import keyboard
-from model import loadmodel, draw_model
+from model import loadmodel
+from renderer import draw_model
+
 from pose_corrector import PoseCorrector
 
 
@@ -58,9 +60,11 @@ class MetadataAnnotator(object):
         self.perspective_num = perspective_num
         self.corrected = corrected
         if self.corrected:
+            print("[Log] Automatically correcting poses ...")
             self.pose_corrector = PoseCorrector(object_file_name_list = object_file_name_list, perspective_num = perspective_num, perspective_pair_weight_path = weight_path)
             self.pose_corrector.correct_scene_pose(self.scene_path, include_top = False)
             self.pose_dir = "corrected_pose"
+            print("[Log] Pose correction finished!")
         else:
             self.pose_dir = "pose"
         self.scene_model_list = self.get_scene_models()
@@ -121,7 +125,7 @@ class MetadataAnnotator(object):
                 model = self.get_models(obj_id)
                 T_camera_object = np.load(pose_file)
                 if image_id == 2:
-                    T_camera_object = np.matmul(T_camera2_camera1, T_camera_object)
+                    T_camera_object = np.matmul(self.T_camera2_camera1, T_camera_object)
                 rendered_image = draw_model(rendered_image, T_camera_object, cam, model)
         return image, rendered_image
     
@@ -160,20 +164,25 @@ class MetadataAnnotator(object):
         ----------
         camera_id: the camera ID, 1 for D435, 2 for L515.
         """
-        self.available = [[], []]
         self.cur_perspective_id = 0
         self.cur_camera_id = camera_id - 1
         self.switching = False
         self.quit = False
         self.transparency = 0.5
         self.listener = keyboard.Listener(on_press = self._on_press, on_release = self._on_release)
+        image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
+        image_perspective_id = self.cur_perspective_id
         self.listener.start()
         while True:
             if self.quit or self.cur_perspective_id < 0 or self.cur_perspective_id >= self.perspective_num:
                 break
-            image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
-            image = rendered_image * self.transparency + image * (1 - self.transparency)
-            cv2.imshow('Final Annotator', image)
+            if self.cur_perspective_id != image_perspective_id:
+                print('[Log] {}/{}'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.perspective_num * 2))
+                image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
+                image_perspective_id = self.cur_perspective_id
+                self.switching = False
+            final = (rendered_image * self.transparency + image * (1 - self.transparency)).astype(np.uint8)
+            cv2.imshow('Final Annotator', final)
             cv2.waitKey(3)
         self.listener.stop()
     
@@ -195,9 +204,11 @@ class MetadataAnnotator(object):
         """
         Run the metadata annotation process.
         """
+        self.available = [[], []]
         self.annotate(camera_id = 1)
         self.annotate(camera_id = 2)
-        self.generate_metadata()
+        if not self.quit:
+            self.generate_metadata()
 
 
 if __name__ == '__main__':
@@ -205,20 +216,19 @@ if __name__ == '__main__':
     parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)
     parser.add_argument('--data_dir', default = 'data', help = 'data for visualization', type = str)
     parser.add_argument('--id', default = 0, help = 'the scene ID', type = int)
-	parser.add_argument('--perspective_num', default = 240, help = 'the perspective number', type = int)
+    parser.add_argument('--perspective_num', default = 240, help = 'the perspective number', type = int)
     parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
-    parser.add_argument('--camera_calibration_file', default = os.path.join('data', 'calibration', 'T_camera2_camera1.npy'), help = 'the path to the camera calibration file in npy format', type = str)
+    parser.add_argument('--camera_calibration_file', default = os.path.join('configs', 'T_camera2_camera1.npy'), help = 'the path to the camera calibration file in npy format', type = str)
     parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
     parser.add_argument('--weight_path', default = None, help = 'the path to the corrected weight, by default the matrix is set to a single-valued matrix.')
     FLAGS = parser.parse_args()
-
     annotator = MetadataAnnotator(
         data_path = FLAGS.data_dir,
         scene_id = FLAGS.id,
         perspective_num = FLAGS.perspective_num,
         model_path = FLAGS.model_dir,
         object_file_name_list = FLAGS.object_file_name_list,
-        camera_calib_file = FLAGS.camera_calib_file,
+        camera_calib_file = FLAGS.camera_calibration_file,
         corrected = FLAGS.corrected,
         weight_path = FLAGS.weight_path
     )
