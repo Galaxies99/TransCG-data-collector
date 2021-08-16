@@ -29,7 +29,7 @@ img, _ = camera.get_full_image()
 cv2.imwrite(os.path.join(FILE_PATH, 'img.png'), img)
 # Camera
 MARKER_LENGTH = 150
-CAMERA_INSTRINCS = np.load('../configs/camInstrincs.npy')
+CAMERA_INSTRINCS = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
 DIST_COEFFICIENTS = np.array([0., 0., 0., 0.]).reshape(4, 1)
 IMG_PATH = os.path.join(FILE_PATH, 'img.png')
 
