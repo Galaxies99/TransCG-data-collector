@@ -10,7 +10,7 @@ from cv2 import aruco # pylint: disable=no-name-in-module
 import numpy as np
 from pyquaternion import Quaternion
 from scipy.spatial.transform import Rotation as R
-from .averageQuaternions import averageQuaternions
+from averageQuaternions import averageQuaternions
 
 
 def aruco_detector(marker_length,
