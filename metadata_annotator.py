@@ -204,7 +204,7 @@ class MetadataAnnotator(object):
         Run the metadata annotation process.
         """
         self.available = [[], []]
-        # self.annotate(camera_id = 1)
+        self.annotate(camera_id = 1)
         self.annotate(camera_id = 2)
         if not self.quit:
             self.generate_metadata()
