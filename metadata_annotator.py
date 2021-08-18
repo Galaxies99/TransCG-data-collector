@@ -136,10 +136,21 @@ class MetadataAnnotator(object):
                     if self.cur_perspective_id < self.perspective_num:
                         self.available[self.cur_camera_id].append(self.cur_perspective_id)
                     self.cur_perspective_id += 1
+                    self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'n':
                 if not self.switching:
                     self.switching = True
                     self.cur_perspective_id += 1
+                    self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
+            elif key.char == 'a':
+                if not self.switching:
+                    self.switching = True
+                    self.cur_perspective_id -= 1
+            elif key.char == 'd':
+                if not self.switching:
+                    self.switching = True
+                    if self.cur_perspective_id < self.max_perspective_id:
+                        self.cur_perspective_id += 1
             elif key.char == '.':
                 if self.transparency <= 0.9:
                     self.transparency += 0.1
@@ -164,6 +175,7 @@ class MetadataAnnotator(object):
         camera_id: the camera ID, 1 for D435, 2 for L515.
         """
         self.cur_perspective_id = 0
+        self.max_perspective_id = 0
         self.cur_camera_id = camera_id - 1
         self.switching = False
         self.quit = False
@@ -176,13 +188,13 @@ class MetadataAnnotator(object):
             if self.quit or self.cur_perspective_id < 0 or self.cur_perspective_id >= self.perspective_num:
                 break
             if self.cur_perspective_id != image_perspective_id:
-                print('[Log] {}/{}'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.perspective_num * 2))
+                print('[Log] Current annotating image {}, current progress: {}/{}'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.max_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.perspective_num * 2))
                 image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
                 image_perspective_id = self.cur_perspective_id
                 self.switching = False
             final = (rendered_image * self.transparency + image * (1 - self.transparency)).astype(np.uint8)
             cv2.imshow('Final Annotator', final)
-            cv2.waitKey(3)
+            cv2.waitKey(1)
         self.listener.stop()
     
     def generate_metadata(self):
