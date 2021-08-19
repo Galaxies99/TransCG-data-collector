@@ -145,14 +145,13 @@ class MetadataAnnotator(object):
                     self.cur_perspective_id += 1
                     self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'a':
-                if not self.switching:
+                if not self.switching and self.cur_perspective_id > 0:
                     self.switching = True
                     self.cur_perspective_id -= 1
             elif key.char == 'd':
-                if not self.switching:
+                if not self.switching and self.cur_perspective_id < self.max_perspective_id:
                     self.switching = True
-                    if self.cur_perspective_id < self.max_perspective_id:
-                        self.cur_perspective_id += 1
+                    self.cur_perspective_id += 1
             elif key.char == '.':
                 if self.transparency <= 0.9:
                     self.transparency += 0.1
