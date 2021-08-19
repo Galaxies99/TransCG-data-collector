@@ -73,12 +73,12 @@ class MetadataAnnotator(object):
         self.validation = [[False] * self.perspective_num, [False] * self.perspective_num]
         if self.has_metadata:
             print('[Log] Metadata found, use annotated metadata.')
-            with open(self.metadata_file, 'w') as f:
+            with open(self.metadata_file, 'r') as f:
                 self.metadata = json.load(f)
             D435_list = self.metadata['D435_valid_perspective_list']
             for id in D435_list:
                 self.validation[0][id] = True
-            L515_list = self.metadata['D435_valid_perspective_list']
+            L515_list = self.metadata['L515_valid_perspective_list']
             for id in L515_list:
                 self.validation[1][id] = True
     
@@ -267,6 +267,8 @@ class MetadataAnnotator(object):
         print('[Log] Valid D435 images: {}, valid L515 images: {}'.format(len(self.available[0]), len(self.available[1])))
         if not self.quit:
             self.generate_metadata()
+        else:
+            print('[Log] Detect "q" is pressed, the metadata will not be saved.')
 
 
 if __name__ == '__main__':
