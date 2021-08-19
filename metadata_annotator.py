@@ -143,19 +143,29 @@ class MetadataAnnotator(object):
     
     def _on_press(self, key):
         try:
-            if key.char == 'y':
-                if not self.switching:
-                    self.switching = True
-                    if self.cur_perspective_id < self.perspective_num:
-                        self.validation[self.cur_camera_id][self.cur_perspective_id] = True
-                    self.cur_perspective_id += 1
+            if key == keyboard.Key.enter:
+                if self.finish:
+                    print('[Log] Annotation saved.')
+                    self.loop = False
+                else:
+                    print('[Log] Annotation has not finished yet, please continue performing annotations.')                
+            elif key.char == 'y':
+                if not self.switching and self.cur_perspective_id < self.perspective_num:
+                    self.validation[self.cur_camera_id][self.cur_perspective_id] = True
+                    if self.cur_perspective_id != self.perspective_num - 1:
+                        self.cur_perspective_id += 1
+                        self.switching = True
+                    else:
+                        self.finish = True
                     self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'n':
-                if not self.switching:
-                    self.switching = True
-                    if self.cur_perspective_id < self.perspective_num:
-                        self.validation[self.cur_camera_id][self.cur_perspective_id] = False
-                    self.cur_perspective_id += 1
+                if not self.switching and self.cur_perspective_id < self.perspective_num:
+                    self.validation[self.cur_camera_id][self.cur_perspective_id] = False
+                    if self.cur_perspective_id != self.perspective_num - 1:
+                        self.cur_perspective_id += 1
+                        self.switching = True
+                    else:
+                        self.finish = True
                     self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'a':
                 if not self.switching and self.cur_perspective_id > 0:
@@ -190,9 +200,11 @@ class MetadataAnnotator(object):
         """
         self.cur_perspective_id = 0
         if self.has_metadata or camera_id == 2:
-            self.max_perspective_id = self.perspective_num
+            self.max_perspective_id = self.perspective_num - 1
+            self.finish = True
         else:
             self.max_perspective_id = 0
+            self.finish = False
         self.cur_camera_id = camera_id - 1
         self.switching = False
         self.quit = False
@@ -202,12 +214,11 @@ class MetadataAnnotator(object):
         image_perspective_id = self.cur_perspective_id
         self.listener.start()
         font_size = 0.5
-	    font_thickness = 1
-	    font = cv2.FONT_HERSHEY_SIMPLEX
-	    font_color = (255,0,255)	
-        while True:
-            if self.quit or self.cur_perspective_id < 0 or self.cur_perspective_id >= self.perspective_num:
-                break
+        font_thickness = 1
+        font = cv2.FONT_HERSHEY_SIMPLEX
+        font_color = (255, 0, 255)
+        self.loop = True
+        while self.loop and not self.quit:
             if self.cur_perspective_id != image_perspective_id:
                 print('[Log] Current annotating image {}, current progress: {}/{}'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.max_perspective_id + 1 + self.perspective_num * (camera_id - 1), self.perspective_num * 2))
                 image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
@@ -215,6 +226,10 @@ class MetadataAnnotator(object):
                 self.switching = False
             final = (rendered_image * self.transparency + image * (1 - self.transparency)).astype(np.uint8)
             final = cv2.putText(final, 'Transparency: %.1f' % self.transparency, (20, final.shape[0] - 10), font, font_size, font_color, font_thickness)
+            if self.max_perspective_id == self.cur_perspective_id and not self.finish:
+                final = cv2.putText(final, 'Image: {}; Current status: Not annotated.'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1)), (20, 25), font, font_size, font_color, font_thickness)
+            else:
+                final = cv2.putText(final, 'Image: {}; Current status: {}.'.format(self.cur_perspective_id + 1 + self.perspective_num * (camera_id - 1), 'Valid' if self.validation[camera_id - 1][self.cur_perspective_id] else 'Invalid'), (20, 25), font, font_size, font_color, font_thickness)
             cv2.imshow('Final Annotator', final)
             cv2.waitKey(1)
         self.listener.stop()

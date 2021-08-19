@@ -61,7 +61,7 @@ def main():
 	font_size = 0.5
 	font_thickness = 1
 	font = cv2.FONT_HERSHEY_SIMPLEX
-	font_color = (255,0,255)	
+	font_color = (255, 0, 255)	
 
 	object_file_name_list_file = open(OBJECT_FILE_NAME_LIST_FILE_NAME,'r')
 	lines = object_file_name_list_file.readlines()
@@ -119,7 +119,7 @@ def main():
 	
 	while runningflag:
 		final = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
-		final = cv2.putText(final, 'Transparency: %.1f' % transparency, (20, final.shape[0] - 10),font, font_size, font_color, font_thickness)
+		final = cv2.putText(final, 'Transparency: %.1f' % transparency, (20, final.shape[0] - 10), font, font_size, font_color, font_thickness)
 		cv2.imshow('Evaluator', final)
 		cv2.waitKey(5)
 
