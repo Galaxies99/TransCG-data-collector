@@ -226,6 +226,7 @@ class MetadataAnnotator(object):
                 self.available[0].append(i)
             if self.validation[1][i]:
                 self.available[1].append(i)
+        print('[Log] Valid D435 images: {}, valid L515 images: {}'.format(len(self.available[0]), len(self.available[1])))
         if not self.quit:
             self.generate_metadata()
 
