@@ -256,7 +256,8 @@ class MetadataAnnotator(object):
         self.annotate(camera_id = 1)
         if not self.has_metadata:
             print("[Log] Automatically load D435 annotation results as initial results of L515.")
-            self.validation[1] = self.validation[0]
+            for i in range(self.perspective_num):
+                self.validation[1][i] = self.validation[0][i]
         self.annotate(camera_id = 2)
         self.available = [[], []]
         for i in range(self.perspective_num):
