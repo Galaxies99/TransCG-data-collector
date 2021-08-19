@@ -134,12 +134,14 @@ class MetadataAnnotator(object):
                 if not self.switching:
                     self.switching = True
                     if self.cur_perspective_id < self.perspective_num:
-                        self.available[self.cur_camera_id].append(self.cur_perspective_id)
+                        self.validation[self.cur_camera_id][self.cur_perspective_id] = True
                     self.cur_perspective_id += 1
                     self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'n':
                 if not self.switching:
                     self.switching = True
+                    if self.cur_perspective_id < self.perspective_num:
+                        self.validation[self.cur_camera_id][self.cur_perspective_id] = False
                     self.cur_perspective_id += 1
                     self.max_perspective_id = max(self.cur_perspective_id, self.max_perspective_id)
             elif key.char == 'a':
@@ -215,9 +217,15 @@ class MetadataAnnotator(object):
         """
         Run the metadata annotation process.
         """
-        self.available = [[], []]
+        self.validation = [[False] * self.perspective_num, [False] * self.perspective_num]
         self.annotate(camera_id = 1)
         self.annotate(camera_id = 2)
+        self.available = [[], []]
+        for i in range(self.perspective_num):
+            if self.validation[0][i]:
+                self.available[0].append(i)
+            if self.validation[1][i]:
+                self.available[1].append(i)
         if not self.quit:
             self.generate_metadata()
 
