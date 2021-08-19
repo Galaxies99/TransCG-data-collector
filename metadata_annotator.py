@@ -68,6 +68,19 @@ class MetadataAnnotator(object):
         else:
             self.pose_dir = "pose"
         self.scene_model_list = self.get_scene_models()
+        self.metadata_file = os.path.join(self.scene_path, "metadata.json")
+        self.has_metadata = os.path.exists(self.metadata_file)
+        self.validation = [[False] * self.perspective_num, [False] * self.perspective_num]
+        if self.has_metadata:
+            print('[Log] Metadata found, use annotated metadata.')
+            with open(self.metadata_file, 'w') as f:
+                self.metadata = json.load(f)
+            D435_list = self.metadata['D435_valid_perspective_list']
+            for id in D435_list:
+                self.validation[0][id] = True
+            L515_list = self.metadata['D435_valid_perspective_list']
+            for id in L515_list:
+                self.validation[1][id] = True
     
     def get_models(self, model_id):
         """
@@ -176,7 +189,10 @@ class MetadataAnnotator(object):
         camera_id: the camera ID, 1 for D435, 2 for L515.
         """
         self.cur_perspective_id = 0
-        self.max_perspective_id = 0
+        if self.has_metadata or camera_id == 2:
+            self.max_perspective_id = self.perspective_num
+        else:
+            self.max_perspective_id = 0
         self.cur_camera_id = camera_id - 1
         self.switching = False
         self.quit = False
@@ -185,6 +201,10 @@ class MetadataAnnotator(object):
         image, rendered_image = self.get_rendered_image(self.cur_perspective_id, camera_id)
         image_perspective_id = self.cur_perspective_id
         self.listener.start()
+        font_size = 0.5
+	    font_thickness = 1
+	    font = cv2.FONT_HERSHEY_SIMPLEX
+	    font_color = (255,0,255)	
         while True:
             if self.quit or self.cur_perspective_id < 0 or self.cur_perspective_id >= self.perspective_num:
                 break
@@ -194,6 +214,7 @@ class MetadataAnnotator(object):
                 image_perspective_id = self.cur_perspective_id
                 self.switching = False
             final = (rendered_image * self.transparency + image * (1 - self.transparency)).astype(np.uint8)
+            final = cv2.putText(final, 'Transparency: %.1f' % self.transparency, (20, final.shape[0] - 10), font, font_size, font_color, font_thickness)
             cv2.imshow('Final Annotator', final)
             cv2.waitKey(1)
         self.listener.stop()
@@ -209,15 +230,18 @@ class MetadataAnnotator(object):
             "L515_valid_perspective_num": len(self.available[1]),
             "L515_valid_perspective_list": self.available[1]
         }
-        with open(os.path.join(self.scene_path, 'metadata.json'), 'w') as f:
+        with open(self.metadata_file, 'w') as f:
             json.dump(self.metadata, f)
+        self.has_metadata = True
     
     def run(self):
         """
         Run the metadata annotation process.
         """
-        self.validation = [[False] * self.perspective_num, [False] * self.perspective_num]
         self.annotate(camera_id = 1)
+        if not self.has_metadata:
+            print("[Log] Automatically load D435 annotation results as initial results of L515.")
+            self.validation[1] = self.validation[0]
         self.annotate(camera_id = 2)
         self.available = [[], []]
         for i in range(self.perspective_num):
