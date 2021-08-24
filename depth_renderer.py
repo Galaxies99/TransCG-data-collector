@@ -2,6 +2,7 @@ import os
 import cv2
 import numpy as np
 import copy
+import json
 import trimesh
 import argparse
 import pyrender
@@ -81,13 +82,17 @@ class SceneRenderer(object):
         depth = np.where(depth >= 65535 - epsilon * scale_factor, 0, depth)
         if save_result:
             cv2.imwrite(os.path.join(image_path, "depth1-gt.png"), depth)
+            depth_ = depth / 1000 * 255
+            cv2.imwrite(os.path.join(image_path, "depth1-gt-view.png"), depth_)
         return depth
     
     def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
         '''
         Render a scene, which contains several images.
         '''
-        for image_id in range(self.perspective_num):
+        with open(os.join(scene_path, 'metadata.json'), 'r') as fp:
+            self.metadata = json.load(fp)
+        for image_id in self.metadata['D435_valid_perspective_list']:
             self.render_image(os.path.join(scene_path, str(image_id)), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
 
 
@@ -100,8 +105,7 @@ class SceneRenderer_L515(object):
         object_file_name_list = kwargs.get('object_file_name_list', 'object_file_name_list.txt')
         self.model_dir = kwargs.get('model_dir', 'models')
         self.perspective_num = kwargs.get('perspective_num', 240)
-        self.T_camera1_camera2 = np.load(kwargs.get('camera_transformation_path', os.path.join('configs', 'T_camera1_camera2.npy')))
-        self.T_camera2_camera1 = np.linalg.inv(self.T_camera1_camera2)
+        self.T_camera2_camera1 = np.load(kwargs.get('camera_transformation_path', os.path.join('configs', 'T_camera2_camera1.npy')))
         with open(object_file_name_list, 'r') as object_filename_file:
             self.obj_filename_list = []
             for line in object_filename_file.readlines():
@@ -151,7 +155,7 @@ class SceneRenderer_L515(object):
         nodes = []
         for obj_id in obj_list:
             obj_pose = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id))) 
-            obj_pose = self.T_camera2_camera1.dot(obj_pose)
+            obj_pose = self.T_camera2_camera1 @ obj_pose
             node = pyrender.Node(mesh = copy.deepcopy(self.get_models(obj_id)), matrix = obj_pose)
             nodes.append(node)
             scene.add_node(node)
@@ -165,13 +169,17 @@ class SceneRenderer_L515(object):
         depth = np.where(depth >= 65535 - epsilon * scale_factor, 0, depth)
         if save_result:
             cv2.imwrite(os.path.join(image_path, "depth2-gt.png"), depth)
+            depth_ = depth / 3000 * 255
+            cv2.imwrite(os.path.join(image_path, "depth2-gt-view.png"), depth_)
         return depth
     
     def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
         '''
         Render a scene, which contains several images.
         '''
-        for image_id in range(self.perspective_num):
+        with open(os.join(scene_path, 'metadata.json'), 'r') as fp:
+            self.metadata = json.load(fp)
+        for image_id in self.metadata['L515_valid_perspective_list']:
             self.render_image(os.path.join(scene_path, str(image_id)), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
 
 
