@@ -77,6 +77,7 @@ class SceneRenderer_D435(object):
         height, width = original_depth.shape
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
+        gt_mask = np.where(full_depth <= epsilon, 0, 1)
         full_depth = np.where(full_depth <= epsilon, 65535, full_depth * scale_factor)
         original_depth = np.where(original_depth <= epsilon * scale_factor, 65535, original_depth)
         depth = np.minimum(full_depth, original_depth).astype(np.uint16)
@@ -85,6 +86,7 @@ class SceneRenderer_D435(object):
             cv2.imwrite(os.path.join(image_path, "depth1-gt.png"), depth)
             depth_ = depth / 1000 * 255
             cv2.imwrite(os.path.join(image_path, "depth1-gt-view.png"), depth_)
+            cv2.imwrite(os.path.join(image_path, "depth1-gt-mask.png"), gt_mask)
         return depth
     
     def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
@@ -166,6 +168,7 @@ class SceneRenderer_L515(object):
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
         full_depth = np.where(full_depth <= epsilon, 65535, full_depth * scale_factor)
+        gt_mask = np.where(full_depth <= epsilon, 0, 1)
         original_depth = np.where(original_depth <= epsilon * scale_factor, 65535, original_depth)
         depth = np.minimum(full_depth, original_depth).astype(np.uint16)
         depth = np.where(depth >= 65535 - epsilon * scale_factor, 0, depth)
@@ -173,6 +176,7 @@ class SceneRenderer_L515(object):
             cv2.imwrite(os.path.join(image_path, "depth2-gt.png"), depth)
             depth_ = depth / 3000 * 255
             cv2.imwrite(os.path.join(image_path, "depth2-gt-view.png"), depth_)
+            cv2.imwrite(os.path.join(image_path, "depth2-gt-mask.png"), gt_mask)
         return depth
     
     def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 4000):
