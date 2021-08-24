@@ -128,7 +128,7 @@ class SceneRenderer_L515(object):
             self.models[model_id] = pyrender.Mesh.from_trimesh(trimesh.load(os.path.join(self.model_dir, obj_filename)))
         return self.models[model_id]
 
-    def render_image(self, image_path, use_corrected_pose = False, save_result = True, epsilon = 1e-6, scale_factor = 1000):
+    def render_image(self, image_path, use_corrected_pose = False, save_result = True, epsilon = 1e-6, scale_factor = 4000):
         '''
         Render a single image.
         '''
@@ -157,7 +157,7 @@ class SceneRenderer_L515(object):
         nodes = []
         for obj_id in obj_list:
             obj_pose = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id))) 
-            obj_pose = self.T_camera2_camera1 @ obj_pose
+            obj_pose = np.matmul(self.T_camera2_camera1, obj_pose)
             node = pyrender.Node(mesh = copy.deepcopy(self.get_models(obj_id)), matrix = obj_pose)
             nodes.append(node)
             scene.add_node(node)
@@ -175,7 +175,7 @@ class SceneRenderer_L515(object):
             cv2.imwrite(os.path.join(image_path, "depth2-gt-view.png"), depth_)
         return depth
     
-    def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 1000):
+    def render_scene(self, scene_path, use_corrected_pose = False, epsilon = 1e-6, scale_factor = 4000):
         '''
         Render a scene, which contains several images.
         '''
@@ -192,5 +192,5 @@ if __name__ == '__main__':
     parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
     parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
     FLAGS = parser.parse_args()
-    renderer = SceneRenderer_D435(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir)
+    renderer = SceneRenderer_L515(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir)
     renderer.render_image(image_path = FLAGS.image_path, use_corrected_pose = FLAGS.corrected, save_result = True)
