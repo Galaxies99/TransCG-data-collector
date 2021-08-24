@@ -2,7 +2,7 @@ import os
 import argparse
 from tqdm import tqdm
 from pose_corrector import PoseCorrector
-from depth_renderer import SceneRenderer, SceneRenderer_L515
+from depth_renderer import SceneRenderer_D435, SceneRenderer_L515
 
 
 os.environ['PYOPENGL_PLATFORM'] = 'egl'
@@ -17,8 +17,8 @@ parser.add_argument('--camera_transformation_path', default = os.path.join('conf
 FLAGS = parser.parse_args()
 begin_id = int(FLAGS.begin_id)
 end_id = int(FLAGS.end_id)
-renderer = SceneRenderer(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir, perspective_num = FLAGS.perspective_num)
+renderer_D435 = SceneRenderer_D435(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir, perspective_num = FLAGS.perspective_num)
 renderer_L515 = SceneRenderer_L515(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir, perspective_num = FLAGS.perspective_num, camera_transformation_path = FLAGS.camera_transformation_path)
 for id in tqdm(range(begin_id, end_id + 1)):
-    renderer.render_scene(os.path.join(FLAGS.data_dir, 'scene{}'.format(id)), use_corrected_pose = True)
+    renderer_D435.render_scene(os.path.join(FLAGS.data_dir, 'scene{}'.format(id)), use_corrected_pose = True)
     renderer_L515.render_scene(os.path.join(FLAGS.data_dir, 'scene{}'.format(id)), use_corrected_pose = True)

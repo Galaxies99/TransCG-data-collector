@@ -11,12 +11,12 @@ import pyrender
 os.environ['PYOPENGL_PLATFORM'] = 'egl'
 
 
-class SceneRenderer(object):
+class SceneRenderer_D435(object):
     '''
-    Render the depth image of the scene.
+    Render the depth image of the scene for D435 camera.
     '''
     def __init__(self, **kwargs):
-        super(SceneRenderer, self).__init__()
+        super(SceneRenderer_D435, self).__init__()
         object_file_name_list = kwargs.get('object_file_name_list', 'object_file_name_list.txt')
         self.model_dir = kwargs.get('model_dir', 'models')
         self.perspective_num = kwargs.get('perspective_num', 240)
@@ -47,7 +47,8 @@ class SceneRenderer(object):
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
         original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth1.png'), cv2.IMREAD_UNCHANGED))
-        cam = pyrender.IntrinsicsCamera(646.373, 646.373, 640.303, 362.029)
+        cam_intrinsics = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
+        cam = pyrender.IntrinsicsCamera(fx = cam_intrinsics[0, 0], cx = cam_intrinsics[0, 2], fy = cam_intrinsics[1, 1], cy = cam_intrinsics[1, 2])
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
         scene.add(cam, pose = flip)
@@ -90,7 +91,7 @@ class SceneRenderer(object):
         '''
         Render a scene, which contains several images.
         '''
-        with open(os.join(scene_path, 'metadata.json'), 'r') as fp:
+        with open(os.path.join(scene_path, 'metadata.json'), 'r') as fp:
             self.metadata = json.load(fp)
         for image_id in self.metadata['D435_valid_perspective_list']:
             self.render_image(os.path.join(scene_path, str(image_id)), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
@@ -133,7 +134,8 @@ class SceneRenderer_L515(object):
         '''
         scene = pyrender.Scene(ambient_light = [0.02, 0.02, 0.02], bg_color = [1.0, 1.0, 1.0])
         original_depth = np.array(cv2.imread(os.path.join(image_path, 'depth2.png'), cv2.IMREAD_UNCHANGED)) 
-        cam = pyrender.IntrinsicsCamera(737.039, 541.719, 736.039, 390.848)
+        cam_intrinsics = np.load(os.path.join('configs', 'camIntrinsics-L515.npy'))
+        cam = pyrender.IntrinsicsCamera(fx = cam_intrinsics[0, 0], cx = cam_intrinsics[0, 2], fy = cam_intrinsics[1, 1], cy = cam_intrinsics[1, 2])
         flip = np.eye(4)
         flip[1, 1] = flip[2, 2] = -1
         scene.add(cam, pose = flip)
@@ -177,7 +179,7 @@ class SceneRenderer_L515(object):
         '''
         Render a scene, which contains several images.
         '''
-        with open(os.join(scene_path, 'metadata.json'), 'r') as fp:
+        with open(os.path.join(scene_path, 'metadata.json'), 'r') as fp:
             self.metadata = json.load(fp)
         for image_id in self.metadata['L515_valid_perspective_list']:
             self.render_image(os.path.join(scene_path, str(image_id)), use_corrected_pose = use_corrected_pose, save_result = True, epsilon = epsilon, scale_factor = scale_factor)
@@ -190,5 +192,5 @@ if __name__ == '__main__':
     parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
     parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
     FLAGS = parser.parse_args()
-    renderer = SceneRenderer(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir)
+    renderer = SceneRenderer_D435(object_file_name_list = FLAGS.object_file_name_list, model_dir = FLAGS.model_dir)
     renderer.render_image(image_path = FLAGS.image_path, use_corrected_pose = FLAGS.corrected, save_result = True)
