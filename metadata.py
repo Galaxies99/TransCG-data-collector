@@ -63,6 +63,8 @@ assert train_D435_cnt + test_D435_cnt == isolated_D435_cnt + cluttered_D435_cnt
 assert train_L515_cnt + test_L515_cnt == isolated_L515_cnt + cluttered_L515_cnt
 
 meta = {
+    "total_scenes": 130,
+    "perspective_num": 240,
     "total_samples": train_D435_cnt + train_L515_cnt + test_D435_cnt + test_L515_cnt,
     "total_D435_samples": train_D435_cnt + test_D435_cnt,
     "total_L515_samples": train_L515_cnt + test_L515_cnt,
