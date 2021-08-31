@@ -30,6 +30,7 @@ This is the official data collector for transparent-grasp dataset. The collector
     - [Ground-truth Depth Rendering](#ground-truth-depth-rendering)
     - [Surface Normal Generation](#surface-normal-generation)
     - [Postprocessing](#postprocessing)
+    - [Wash Data](#wash-data)
   - [Citation](#citation)
   - [Maintenance](#maintenance)
 
@@ -356,6 +357,19 @@ python postprocessing/postprocessing.py --data_dir [Data Path] --begin_id [Begin
 ```
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
+
+### Wash Data
+
+**Prequisities**. [Postprocessing](#postprocessing).
+
+You may wash invalid data (those data with depth = 0 for all pixels) by executing the data washer script.
+
+```bash
+python postprocessing/wash_data.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+```
+
+where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
+
 
 ## Citation
 
