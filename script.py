@@ -2,7 +2,7 @@ import os
 import argparse
 import numpy as np
 import netrelay.client as client
-from jsonhandler import formatter_str, find_obj
+from utils.pst_jsonhandler import formatter_str, find_obj
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default = 0, help = 'Object ID', type = int)
@@ -19,10 +19,10 @@ OBJECT_FILE_NAME_LIST_FILE_NAME = FLAGS.object_file_name_list
 
 objectfilenamelist = []
 with open(OBJECT_FILE_NAME_LIST_FILE_NAME, 'r') as f:
-	lines = f.readlines()
-	for line in lines:
-		if not (line == '\n'):
-			objectfilenamelist.append(line.replace('\n', '').replace('\r', ''))
+    lines = f.readlines()
+    for line in lines:
+        if not (line == '\n'):
+            objectfilenamelist.append(line.replace('\n', '').replace('\r', ''))
 
 
 filename = '{}-{}'.format(ID, TIME)

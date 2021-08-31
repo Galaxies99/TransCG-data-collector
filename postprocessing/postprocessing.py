@@ -1,9 +1,8 @@
 import os
 import argparse
 from tqdm import tqdm
-from pose_corrector import PoseCorrector
-from depth_renderer import SceneRenderer_D435, SceneRenderer_L515
-from sn_generator import SurfaceNormalGenerator
+from .depth_renderer import SceneRenderer_D435, SceneRenderer_L515
+from .sn_generator import SurfaceNormalGenerator
 
 os.environ['PYOPENGL_PLATFORM'] = 'egl'
 parser = argparse.ArgumentParser()

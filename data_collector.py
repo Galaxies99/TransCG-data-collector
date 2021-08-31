@@ -4,10 +4,9 @@ import numpy as np
 from cv2 import cv2
 from pynput import keyboard
 import netrelay.client as client
-from renderer import draw_model
 from camera.camera import RealSenseCamera
-from jsonhandler import formatter_str, find_obj
-from model import loadmodel
+from utils.pst_jsonhandler import formatter_str, find_obj
+from utils.model3d import loadmodel, draw_model
 
 
 parser = argparse.ArgumentParser()

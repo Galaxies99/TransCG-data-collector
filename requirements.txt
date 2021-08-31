@@ -7,9 +7,11 @@ opencv-contrib-python
 transforms3d
 scipy
 plyfile
-keyboard
 pynput
 open3d
 dill
+tqdm
+trimesh
 PyYaml
 pyquaternion
+pyrender

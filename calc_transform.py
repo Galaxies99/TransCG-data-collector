@@ -1,7 +1,7 @@
 import argparse
 import numpy as np
-from trans3d import get_mat
-from xmlhandler import xmlReader
+from utils.trans3d import get_mat
+from utils.xmlhandler import xmlReader
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--id', default = 0, help = 'Object ID', type = int)

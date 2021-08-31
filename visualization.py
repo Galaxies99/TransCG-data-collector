@@ -3,9 +3,8 @@ import argparse
 import numpy as np
 from cv2 import cv2
 from pynput import keyboard
-from renderer import draw_model
-from model import loadmodel
-from pose_corrector import PoseCorrector
+from utils.model3d import draw_model, loadmodel
+from postprocessing.pose_corrector import PoseCorrector
 
 
 parser = argparse.ArgumentParser()
@@ -32,97 +31,97 @@ DOWNSAMPLE_VOXEL_SIZE_M = 0.005
 transparency = 0.5
 
 def on_press(key):
-	global transparency, runningflag
-	global state
-	if state == 'normal':
-		try:		
-			if key.char == '.':
-				if transparency <= 0.9:
-					transparency += 0.1
-			elif key.char == ',':
-				if transparency >= 0.1:
-					transparency -= 0.1
-			elif key.char == 'q':
-				state = 'quit'
-		except AttributeError:
-			pass
-	if state == 'quit':
-		runningflag = False
-		return False
+    global transparency, runningflag
+    global state
+    if state == 'normal':
+        try:        
+            if key.char == '.':
+                if transparency <= 0.9:
+                    transparency += 0.1
+            elif key.char == ',':
+                if transparency >= 0.1:
+                    transparency -= 0.1
+            elif key.char == 'q':
+                state = 'quit'
+        except AttributeError:
+            pass
+    if state == 'quit':
+        runningflag = False
+        return False
 
 
 def on_release(key):
-	pass
+    pass
 
 
 def main():
-	global runningflag, transparency
-	
-	font_size = 0.5
-	font_thickness = 1
-	font = cv2.FONT_HERSHEY_SIMPLEX
-	font_color = (255, 0, 255)	
+    global runningflag, transparency
+    
+    font_size = 0.5
+    font_thickness = 1
+    font = cv2.FONT_HERSHEY_SIMPLEX
+    font_color = (255, 0, 255)    
 
-	object_file_name_list_file = open(OBJECT_FILE_NAME_LIST_FILE_NAME,'r')
-	lines = object_file_name_list_file.readlines()
-	objectfilenamelist = []
-	for line in lines:
-		if not (line == '\n'):
-			objectfilenamelist.append(line.replace('\n','').replace('\r',''))	
-	
-	cam = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
+    object_file_name_list_file = open(OBJECT_FILE_NAME_LIST_FILE_NAME,'r')
+    lines = object_file_name_list_file.readlines()
+    objectfilenamelist = []
+    for line in lines:
+        if not (line == '\n'):
+            objectfilenamelist.append(line.replace('\n','').replace('\r',''))    
+    
+    cam = np.load(os.path.join('configs', 'camIntrinsics-D435.npy'))
 
-	obj_id_list = range(len(objectfilenamelist))
+    obj_id_list = range(len(objectfilenamelist))
 
-	models = []
-	for obj_id in obj_id_list:
-		models.append(None)
+    models = []
+    for obj_id in obj_id_list:
+        models.append(None)
 
-	if CORRECTED:
-		corrector = PoseCorrector(object_file_name_list = OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, perspective_pair_weight_path = CORRECTED_WEIGHT_PATH)
-		res_model_list, res_T = corrector.correct_pose(PRE_DATA_DIR, id, include_top = False, save_pose = False)
-		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
-		rendered_image = image
-		for i, obj_id in enumerate(res_model_list):
-			T_camera_object = res_T[i]
-			obj_filename = objectfilenamelist[obj_id]
-			if models[obj_id] is None:
-				print('log: loading model', obj_filename)
-				models[obj_id] = loadmodel(MODEL_DIR, obj_filename)
-			rendered_image = draw_model(rendered_image, T_camera_object, cam, models[obj_id])
-	else:
-		image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
-		rendered_image = image
-		pose_dir = os.path.join(DATA_DIR, 'pose')
+    if CORRECTED:
+        corrector = PoseCorrector(object_file_name_list = OBJECT_FILE_NAME_LIST_FILE_NAME, perspective_num = 240, perspective_pair_weight_path = CORRECTED_WEIGHT_PATH)
+        res_model_list, res_T = corrector.correct_pose(PRE_DATA_DIR, id, include_top = False, save_pose = False)
+        image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
+        rendered_image = image
+        for i, obj_id in enumerate(res_model_list):
+            T_camera_object = res_T[i]
+            obj_filename = objectfilenamelist[obj_id]
+            if models[obj_id] is None:
+                print('log: loading model', obj_filename)
+                models[obj_id] = loadmodel(MODEL_DIR, obj_filename)
+            rendered_image = draw_model(rendered_image, T_camera_object, cam, models[obj_id])
+    else:
+        image = cv2.imread(os.path.join(DATA_DIR, 'rgb1.png'))
+        rendered_image = image
+        pose_dir = os.path.join(DATA_DIR, 'pose')
 
-		for filename in os.listdir(pose_dir):
-			obj_id, ext = os.path.splitext(filename)
-			if ext != '.npy':
-				continue
-			try:
-				obj_id = int(obj_id)
-			except Exception:
-				continue
-			if obj_id < 0 or obj_id >= len(objectfilenamelist):
-				continue
-			obj_filename = objectfilenamelist[obj_id]
-			if models[obj_id] is None:
-				print('log: loading model', obj_filename)
-				models[obj_id] = loadmodel(MODEL_DIR, obj_filename)
-			T_camera_object = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id)))
-			rendered_image = draw_model(rendered_image, T_camera_object, cam, models[obj_id])
+        for filename in os.listdir(pose_dir):
+            obj_id, ext = os.path.splitext(filename)
+            if ext != '.npy':
+                continue
+            try:
+                obj_id = int(obj_id)
+            except Exception:
+                continue
+            if obj_id < 0 or obj_id >= len(objectfilenamelist):
+                continue
+            obj_filename = objectfilenamelist[obj_id]
+            if models[obj_id] is None:
+                print('log: loading model', obj_filename)
+                models[obj_id] = loadmodel(MODEL_DIR, obj_filename)
+            T_camera_object = np.load(os.path.join(pose_dir, '{}.npy'.format(obj_id)))
+            rendered_image = draw_model(rendered_image, T_camera_object, cam, models[obj_id])
 
 
-	runningflag = True
-	listener = keyboard.Listener(on_press=on_press,on_release=on_release)
-	listener.start()
-	
-	while runningflag:
-		final = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
-		final = cv2.putText(final, 'Transparency: %.1f' % transparency, (20, final.shape[0] - 10), font, font_size, font_color, font_thickness)
-		cv2.imshow('Evaluator', final)
-		cv2.waitKey(5)
+    runningflag = True
+    listener = keyboard.Listener(on_press=on_press,on_release=on_release)
+    listener.start()
+    
+    while runningflag:
+        final = (rendered_image * transparency + image * (1 - transparency)).astype(np.uint8)
+        final = cv2.putText(final, 'Transparency: %.1f' % transparency, (20, final.shape[0] - 10), font, font_size, font_color, font_thickness)
+        cv2.imshow('Evaluator', final)
+        cv2.waitKey(5)
 
 
 if __name__ == '__main__':
-	main()
+    main()

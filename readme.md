@@ -1,6 +1,6 @@
-# Depth Filler Data Collector
+# Transparent-Grasp Data Collector.
 
-This project is mainly written by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao). This project aims to develop a convenient manual annotator when raw models and scenes are given, along with a handy data collector. In this special camera version of 6dpose annotator, the scene is captured by a RealSense camera.
+This is the official data collector for transparent-grasp dataset. The collector is mainly developed by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao).
 
 ## Preparation
 

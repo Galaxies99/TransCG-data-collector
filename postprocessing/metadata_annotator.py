@@ -10,8 +10,7 @@ import json
 import argparse
 import numpy as np
 from pynput import keyboard
-from model import loadmodel
-from renderer import draw_model
+from utils.model3d import loadmodel, draw_model
 
 from pose_corrector import PoseCorrector
 
