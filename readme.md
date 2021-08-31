@@ -370,12 +370,11 @@ python postprocessing/wash_data.py --data_dir [Data Path] --begin_id [Begin ID] 
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
 
-
 ## Citation
 
 ```bibtex
 @misc{fang2021tgcollector,
-  author =       {Hongjie Fang},
+  author =       {Hongjie Fang, Minghao Gou, Sheng Xu, Hao-Shu Fang},
   title =        {Transparent-Grasp Data Collector},
   howpublished = {\url{https://github.com/Galaxies99/transparent-grasp-data-collector}},
   year =         {2021}
