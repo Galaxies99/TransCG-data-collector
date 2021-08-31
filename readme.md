@@ -30,6 +30,7 @@ This is the official data collector for transparent-grasp dataset. The collector
     - [Ground-truth Depth Rendering](#ground-truth-depth-rendering)
     - [Surface Normal Generation](#surface-normal-generation)
     - [Postprocessing](#postprocessing)
+  - [Citation](#citation)
   - [Maintenance](#maintenance)
 
 ## Preparation
@@ -355,6 +356,17 @@ python postprocessing/postprocessing.py --data_dir [Data Path] --begin_id [Begin
 ```
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
+
+## Citation
+
+```bibtex
+@misc{fang2021tgcollector,
+  author =       {Hongjie Fang},
+  title =        {Transparent-Grasp Data Collector},
+  howpublished = {\url{https://github.com/Galaxies99/transparent-grasp-data-collector}},
+  year =         {2021}
+}
+```
 
 ## Maintenance
 
