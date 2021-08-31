@@ -61,6 +61,6 @@ with open('results/{}.npy'.format(filename), 'wb') as fres:
 
 client.close(s)
 
-os.system('python annotator.py --id {} --time {}'.format(ID, TIME))
+os.system('python annotation/annotator.py --id {} --time {}'.format(ID, TIME))
 
-os.system('python calc_transform.py --id {} --time {}'.format(ID, TIME))
+os.system('python annotation/calc_transform.py --id {} --time {}'.format(ID, TIME))

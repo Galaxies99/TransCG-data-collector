@@ -1,10 +1,9 @@
 import os
 import sys
 import time
-from ur_toolbox.camera import RealSense # pylint: disable=import-error
-# from multiprocessing import shared_memory
 import numpy as np
 from cv2 import cv2
+from realsense import RealSense
 
 
 class RealSenseCamera(object):

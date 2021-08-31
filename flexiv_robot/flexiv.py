@@ -20,7 +20,7 @@ import libwrapper.FvrParamsWrapper as fvr_params
 import libwrapper.FvrUtilsWrapper as fvr_utils
 import libwrapper.FvrEthernetConnectionWrapper.ExtCtrlMode as ext_ctrl_mode
 
-from pose import compute_angle_two_quat
+from .pose import compute_angle_two_quat
 
 
 class ForceServer(threading.Thread):

@@ -2,7 +2,7 @@ import numpy as np
 import time
 import os
 import cv2
-from flexiv import FlexivRobot
+from .flexiv import FlexivRobot
 from camera.camera import RealSenseCamera
 from calibration.marker_calibrate import aruco_detector
 

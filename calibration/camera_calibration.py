@@ -3,9 +3,9 @@ import sys
 import argparse
 from cv2 import cv2
 import numpy as np
-from marker_calibrate import aruco_detector
-sys.path.append(os.path.dirname(sys.path[0]))
+from .marker_calibrate import aruco_detector
 from camera.camera import RealSenseCamera # pylint: disable=import-error
+
 
 parser = argparse.ArgumentParser()
 parser.add_argument('--times', default=5, help='Calibration times', type=int)

@@ -1,7 +1,7 @@
 import numpy as np
 import time
 import os
-from flexiv import FlexivRobot
+from .flexiv import FlexivRobot
 import numpy as np
 from cv2 import cv2
 import netrelay.client as client
@@ -99,7 +99,7 @@ n_shape, _ = joint_poses.shape
 
 flexiv.move_joint(joint_poses[0], duration = safe_duration)
 
-scene_id = int(input('Scene ID'))
+scene_id = int(input('Scene ID: '))
 
 for i in range(n_shape):
     joint_pos = joint_poses[i]

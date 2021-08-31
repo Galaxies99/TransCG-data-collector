@@ -3,11 +3,10 @@ import sys
 import argparse
 from cv2 import cv2
 import numpy as np
-from marker_calibrate import aruco_detector
-sys.path.append(os.path.dirname(sys.path[0]))
+from .marker_calibrate import aruco_detector
 from camera.camera import RealSenseCamera # pylint: disable=import-error
 import netrelay.client as client # pylint: disable=import-error
-from jsonhandler import formatter_str, find_obj # pylint: disable=import-error
+from utils.pst_jsonhandler import formatter_str, find_obj # pylint: disable=import-error
 
 
 parser = argparse.ArgumentParser()
