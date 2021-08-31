@@ -19,8 +19,6 @@ calibration/images/
 calibration/robot_images/
 .vscode/
 .history/
-configs/T_camera1_camera2.npy
-configs/T_tracker_camera.npy
 configs/robot_calibration/
 robot_collector.sh
 
