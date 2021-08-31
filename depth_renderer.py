@@ -167,8 +167,8 @@ class SceneRenderer_L515(object):
         height, width = original_depth.shape
         renderer = pyrender.OffscreenRenderer(viewport_width = width, viewport_height = height, point_size = 1.0)
         full_depth = renderer.render(scene, flags = pyrender.constants.RenderFlags.DEPTH_ONLY)
-        full_depth = np.where(full_depth <= epsilon, 65535, full_depth * scale_factor)
         gt_mask = np.where(full_depth <= epsilon, 0, 1)
+        full_depth = np.where(full_depth <= epsilon, 65535, full_depth * scale_factor)
         original_depth = np.where(original_depth <= epsilon * scale_factor, 65535, original_depth)
         depth = np.minimum(full_depth, original_depth).astype(np.uint16)
         depth = np.where(depth >= 65535 - epsilon * scale_factor, 0, depth)
@@ -191,7 +191,7 @@ class SceneRenderer_L515(object):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser()
-    parser.add_argument('--image_path', default = 'data/scene1/0/', help = 'data for rendering (should be a perspective of a scene)', type = str)
+    parser.add_argument('--image_path', default = 'data/scene5/0/', help = 'data for rendering (should be a perspective of a scene)', type = str)
     parser.add_argument('--model_dir', default = 'models', help = 'ply model files directory path', type = str)
     parser.add_argument('--object_file_name_list', default = 'object_file_name_list.txt', help = 'ascii text file name that specifies the filenames of all possible objects', type = str)
     parser.add_argument('--corrected', action = 'store_true', help = 'whether to use the corrected poses.')
