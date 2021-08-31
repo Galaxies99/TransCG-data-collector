@@ -100,7 +100,7 @@ class SurfaceNormalGenerator(object):
         for image_id in scene_metadata['D435_valid_perspective_list']:
             self.gen_image_normals(os.path.join(scene_path, str(image_id)), 'rgb1.png', 'depth1-gt.png', 'depth1-gt-sn.png')
         for image_id in scene_metadata['L515_valid_perspective_list']:
-            self.gen_image_normals(os.path.join(scene_path, str(scene_id)), 'rgb2.png', 'depth2-gt.png', 'depth2-gt-sn.png')
+            self.gen_image_normals(os.path.join(scene_path, str(image_id)), 'rgb2.png', 'depth2-gt.png', 'depth2-gt-sn.png')
     
 
 if __name__ == '__main__':
