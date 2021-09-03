@@ -3,7 +3,7 @@ import sys
 import time
 import numpy as np
 from cv2 import cv2
-from realsense import RealSense
+from .realsense import RealSense
 
 
 class RealSenseCamera(object):

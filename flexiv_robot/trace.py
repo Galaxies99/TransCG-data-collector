@@ -93,7 +93,7 @@ def fetch_data(ID, TIME):
 
 flexiv = FlexivRobot(robot_ip_address = robot_ip_address, pc_ip_address = pc_ip_address)
 
-joint_poses = np.load('robot/robot_path/joint_poses.npy')
+joint_poses = np.load('flexiv_robot/robot_path/joint_poses.npy')
 
 n_shape, _ = joint_poses.shape
 

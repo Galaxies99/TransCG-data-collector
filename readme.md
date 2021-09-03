@@ -145,7 +145,7 @@ Put markers on the fixers, then register each object as its name in the PST trac
 3. Run the following command to perform calibration between camera and tracker.
 
     ```bash
-    python calibration/calibration.py
+    python -m calibration.calibration
     ```
 
     Combining with the data reading from tracker, the calibration process can calculate the transformation matrix between tracker and camera, which will be stored in file `configs/T_tracker_camera.npy`.
@@ -165,7 +165,7 @@ If you just want to perform calibration between cameras, then you can use the ar
 Execute the following command and begin annotation.
 
 ```bash
-python annotation/script.py --id [Object ID] --time [Times of sampling] --ip [IP Address] --port [Port]
+python -m annotation.script --id [Object ID] --time [Times of sampling] --ip [IP Address] --port [Port]
 ```
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[Times of samping]` with the current times of sampling (0-based), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. Here is the execution process of the script.
@@ -183,7 +183,7 @@ Here, replace the `[Object ID]` with the current object ID (0-based, the same or
 Run the following script to evaluate your annotation in real-time.
 
 ```bash
-python annotation/eval_realtime.py --id [Object ID] --ip [IP Address] --port [Port]
+python -m annotation.eval_realtime --id [Object ID] --ip [IP Address] --port [Port]
 ```
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in Step 1. After several seconds, you will see real-time evluation image captured by the tracker on the screen.
@@ -199,7 +199,7 @@ Notice that you can also ignore the `--id [Object ID]` arguments. By doing so, t
 After annotating all the objects you need for constructing data, run the following script to collects the data manually.
 
 ```bash
-python collection/data_collector.py --id [Scene ID]
+python -m collection.data_collector --id [Scene ID]
 ```
 
 Once you are satisfied with the picture and the models shown on the screen, you can press Enter to save one shot of this screen. You can also press `,` or `.` to increase or decrease the transparency of the objects respectively. By pressing `q`, you can finish the collection of this scene. The data will be collected in the following form.
@@ -235,7 +235,7 @@ The default settings for robot calibration is using Flexiv Arm. You should make 
 Run the following script:
 
 ```bash
-python flexiv_robot/trace-calibration.py
+python -m flexiv_robot.trace-calibration
 ```
 
 Then, you just need to wait for the calibration process to finish. The calibration data is stored in the `configs/robot_calibration` folder.
@@ -249,7 +249,7 @@ Then, you just need to wait for the calibration process to finish. The calibrati
 To automatically collect data by robots, you need to first call the robot calibration script in every point of the robot's route by
 
 ```bash
-python calibration/robot_calibration.py --id [ID] --path [Path to Robot Image]
+python -m calibration.robot_calibration --id [ID] --path [Path to Robot Image]
 ```
 
 where `[ID]` is the route point's ID, and `[Path to Robot Image]` is the image path to store the calibration image (default: `robot_images`). After executing the script, the program will generate the calibration image in the image folder, while saving the calibration transformation matrix (from camera to calibration object) in `configs/robot_calibration/` folder. This calibration process uses `aruco` to perform camera calibration.
@@ -263,7 +263,7 @@ The default settings for robot data collection is using Flexiv Arm. You should m
 Run the following script:
 
 ```bash
-python collection/trace.py
+python -m flexiv_robot.trace
 ```
 
 Then, after entering scene ID, you just need to wait for the data collection process to finish. The data will be stored in `data/scene[Scene ID]` folder.
@@ -275,7 +275,7 @@ Then, after entering scene ID, you just need to wait for the data collection pro
 If you want to automatically collect data by robots, you can follow the annotation step 1-2, then call the data collector script in every point of the robot's route by
 
 ```bash
-python collection/robot_collector.py --id [Scene ID] --time [Times of sampling] (--ip [IP Address]) (--port [Port])
+python -m collection.robot_collector --id [Scene ID] --time [Times of sampling] (--ip [IP Address]) (--port [Port])
 ```
 
 Here, replace the `[Object ID]` with the current object ID (0-based, the same order as in the previous file `object_file_name_list.txt`), replace `[Times of samping]` with the current times of sampling (0-based), replace `[IP Address]` with the same IP address in Step 1, and replace `[Port]` with the same port in annotation step 1.
@@ -289,7 +289,7 @@ The data will be in the same format as introduced in data collection section.
 After automatically collecting data, you may need to correct the poses of the object due to the vision field of the tracker. We can use the robot calibration data and the collected data to perform pose correction. You may execute the following script:
 
 ```bash
-python postprocessing/pose_corrector.py --data_dir [Data Path] --id [Scene ID] --perspective_num [Perspective Number] (--weight_path [Weight Path])
+python -m postprocessing.pose_corrector --data_dir [Data Path] --id [Scene ID] --perspective_num [Perspective Number] (--weight_path [Weight Path])
 ```
 
 The corrected pose will be in the folder named `corrected_pose` in `[Data Path]` directory; `weight_path` is used for pose correction, default to None.
@@ -301,7 +301,7 @@ The corrected pose will be in the folder named `corrected_pose` in `[Data Path]`
 You may perform visualization to check whether the collected data is satisfactory by
 
 ```bash
-python collection/visualization.py --data_dir [Scene Path] --id [Image ID] (--corrected) (--weight_path [Weight Path])
+python -m collection.visualization --data_dir [Scene Path] --id [Image ID] (--corrected) (--weight_path [Weight Path])
 ```
 
 where setting `--corrected` means using the corrected poses (the pose will be automatically corrected, there is no need to perform "object pose correction" first), otherwise the default poses detected by the tracker will be used; `weight_path` is used for pose correction, default to None.
@@ -315,7 +315,7 @@ where setting `--corrected` means using the corrected poses (the pose will be au
 After collection, you need to manually label metadata for each scenes, since some poses generated by the tracker or the pose corrector may be inaccurate. Execute the following script:
 
 ```bash
-python postprocessing/metadata_annotator.py --data_dir [Data Path] --id [Scene ID] --camera_calibration_file [Camera Calibration File] (--corrected) (--weight_path [Weight Path])
+python -m postprocessing.metadata_annotator --data_dir [Data Path] --id [Scene ID] --camera_calibration_file [Camera Calibration File] (--corrected) (--weight_path [Weight Path])
 ```
 
 where setting `--corrected` means using the corrected poses (the pose will be automatically corrected, there is no need to perform "object pose correction" first), otherwise the default poses detected by the tracker will be used; `weight_path` is used for pose correction, default to None.
@@ -329,7 +329,7 @@ where setting `--corrected` means using the corrected poses (the pose will be au
 You may render the ground-truth depth by executing the following command:
 
 ```bash
-python postprocessing/depth_renderer.py --image_path [Image Path] (--corrected) (--weight_path [Weight Path])
+python -m postprocessing.depth_renderer --image_path [Image Path] (--corrected) (--weight_path [Weight Path])
 ```
 
 where setting `--corrected` means using the corrected poses (the pose will be automatically corrected, there is no need to perform "object pose correction" first), otherwise the default poses detected by the tracker will be used; `weight_path` is used for pose correction, default to None.
@@ -341,7 +341,7 @@ where setting `--corrected` means using the corrected poses (the pose will be au
 you may generate the surface normal by executing the following command:
 
 ```bash
-python postprocessing/sn_generator.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+python -m postprocessing.sn_generator --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
 ```
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform surface normal generation.
@@ -353,7 +353,7 @@ where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of
 You may perform ground-truth depth rendering and surface normal generation automatically by executing the postprocessing script.
 
 ```bash
-python postprocessing/postprocessing.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+python -m postprocessing/postprocessing --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
 ```
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.
@@ -365,7 +365,7 @@ where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of
 You may wash invalid data (those data with depth = 0 for all pixels) by executing the data washer script.
 
 ```bash
-python postprocessing/wash_data.py --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
+python -m postprocessing/wash_data --data_dir [Data Path] --begin_id [Begin ID] --end_id [End ID]
 ```
 
 where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of the scenes on which we want to perform postprocessing.

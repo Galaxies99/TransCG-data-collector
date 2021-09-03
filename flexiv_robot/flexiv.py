@@ -14,11 +14,11 @@ import numpy as np
 # import torch
 from scipy.spatial.transform import Rotation as R
 
-import libwrapper
-import libwrapper.FvrEthernetConnectionWrapper as fvr_ether
-import libwrapper.FvrParamsWrapper as fvr_params
-import libwrapper.FvrUtilsWrapper as fvr_utils
-import libwrapper.FvrEthernetConnectionWrapper.ExtCtrlMode as ext_ctrl_mode
+from . import libwrapper
+from .libwrapper import FvrEthernetConnectionWrapper as fvr_ether
+from .libwrapper import FvrParamsWrapper as fvr_params
+from .libwrapper import FvrUtilsWrapper as fvr_utils
+from .libwrapper.FvrEthernetConnectionWrapper import ExtCtrlMode as ext_ctrl_mode
 
 from .pose import compute_angle_two_quat
 
