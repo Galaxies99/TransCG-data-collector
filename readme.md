@@ -1,8 +1,8 @@
-# Transparent-Grasp Data Collector
+# TransCG Data Collector
 
-This is the official data collector for transparent-grasp dataset. The collector is mainly developed by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao).
+This is the official data collector for TransCG dataset. The collector is mainly developed by [Tony Fang](https://github.com/Galaxies99) based on the initial project by [Minghao Gou](https://github.com/GouMinghao).
 
-- [Transparent-Grasp Data Collector](#transparent-grasp-data-collector)
+- [TransCG Data Collector](#transcg-data-collector)
   - [Preparation](#preparation)
     - [Hardware Preparation](#hardware-preparation)
     - [Python Requirements](#python-requirements)
@@ -375,8 +375,8 @@ where `[Begin ID]` and `[End ID]` are the begin scene ID and the end scene ID of
 ```bibtex
 @misc{fang2021tgcollector,
   author =       {Hongjie Fang, Minghao Gou, Sheng Xu, Hao-Shu Fang},
-  title =        {Transparent-Grasp Data Collector},
-  howpublished = {\url{https://github.com/Galaxies99/transparent-grasp-data-collector}},
+  title =        {TransCG Data Collector},
+  howpublished = {\url{https://github.com/Galaxies99/transcg-data-collector}},
   year =         {2021}
 }
 ```
